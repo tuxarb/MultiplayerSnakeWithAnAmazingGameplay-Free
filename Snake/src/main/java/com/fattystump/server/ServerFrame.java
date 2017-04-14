@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SnakeServer extends JFrame {
+public class ServerFrame extends JFrame {
 
     // TODO: добавить серверный обработчик (класс ServerHandler)
     private JButton buttonStart;
@@ -39,7 +39,7 @@ public class SnakeServer extends JFrame {
         this.textLog = textLog;
     }
 
-    private SnakeServer() {
+    private ServerFrame() {
         setTitle("Multiplayer Snake Server (© 2017 Fatty Stump)");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 400);
@@ -96,7 +96,7 @@ public class SnakeServer extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    SnakeServer frame = new SnakeServer();
+                    ServerFrame frame = new ServerFrame();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
