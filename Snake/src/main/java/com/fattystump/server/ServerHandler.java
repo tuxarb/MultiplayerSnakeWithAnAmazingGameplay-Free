@@ -1,7 +1,11 @@
 package com.fattystump.server;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.fattystump.Request;
+import com.fattystump.Response;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,7 +28,61 @@ public class ServerHandler implements ActionListener {
     }
 
     public void start() {
+        server = new Server(8192, 8192);
+        server.start();
 
+        try {
+            server.bind(50000, 50001);
+            log("Сервер запущен!");
+
+            Kryo kryo = server.getKryo();
+            kryo.register(Request.class);
+            kryo.register(Response.class);
+
+            server.addListener(new Listener() {
+                @Override
+                public void received(Connection connection, Object object) {
+                    if (object instanceof Request) {
+                        Request request = (Request)object;
+                        handleRequest(request.getContent(), connection);
+                    }
+                }
+
+                @Override
+                public void connected(Connection connection) {
+                    if (banList.contains(connection.getRemoteAddressTCP().getAddress().toString())) {
+                        log("Забаненный IP " + connection.getRemoteAddressTCP().getAddress() + " пытался присоединиться");
+                        respond("ban;Вы были забанены! Вы лох. Чмо. Нет друзей. Даже в змейке вас забанили.", connection);
+                        connection.close();
+                    } else
+                        log("Игровой клиент " +
+                                connection.getID() +
+                                " (" +
+                                connection.getRemoteAddressTCP().getAddress() +
+                                ") присоединился");
+                }
+
+                @Override
+                public void disconnected(Connection connection) {
+                    log("Игровой клиент " + connection.getID() + " отсоединился");
+                    if (clients.containsKey(connection.getID())) {
+                        int playerID = clients.get(connection.getID());
+                        game.players.set(playerID - 2, null);
+                        log("Игрок #" + playerID + " удален");
+                        deadIds.add(playerID);
+                        clients.remove(connection.getID());
+                    }
+                }
+            });
+
+            game = new Game();
+            timer = new Timer(Game.TICK, this);
+            timer.start();
+            log("Игра создана. Сыграем? ;)");
+
+        } catch (Exception e) {
+            log(e.toString());
+        }
     }
 
     public void stop() {
