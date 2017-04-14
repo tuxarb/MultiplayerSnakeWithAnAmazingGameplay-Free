@@ -10,7 +10,9 @@ import com.fattystump.Response;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ServerHandler implements ActionListener {
@@ -92,7 +94,14 @@ public class ServerHandler implements ActionListener {
     }
 
     private void log(String message) {
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        serverFrame.getTextLog().setText(
+                serverFrame.getTextLog().getText() +
+                        dateFormat.format(new Date()) +
+                        " " +
+                        message +
+                        "\n"
+        );
     }
 
     public void handleCommand(String command) {
