@@ -1,4 +1,4 @@
-package main.java.com.fattystump.client;
+package com.fattystump.client;
 
 import javax.swing.*;
 import java.awt.*;

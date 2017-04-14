@@ -1,4 +1,4 @@
-package main.java.com.fattystump.server;
+package com.fattystump.server;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

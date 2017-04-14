@@ -1,4 +1,4 @@
-package main.java.com.fattystump;
+package com.fattystump;
 
 public class Response {
 

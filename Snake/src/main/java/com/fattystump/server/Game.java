@@ -1,4 +1,4 @@
-package main.java.com.fattystump.server;
+package com.fattystump.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
