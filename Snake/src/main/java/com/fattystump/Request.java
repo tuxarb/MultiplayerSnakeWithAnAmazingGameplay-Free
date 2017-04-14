@@ -1,8 +1,6 @@
 package com.fattystump;
 
-/**
- * Created by vkhly on 13.04.2017.
- */
+
 public class Request {
 
     public String content;
