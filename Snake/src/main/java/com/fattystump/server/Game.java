@@ -19,7 +19,7 @@ public class Game {
     public  ArrayList<Integer> solidX = new ArrayList<>();
     public  ArrayList<Integer> solidY = new ArrayList<>();
     public  int highScore = 0;
-    public boolean deadPlayerBecomeSolid = false;
+    public boolean deadPlayersBecomeSolids = false;
 
     public Game(){
         for(int i = 0; i < FRUITS; i++){
@@ -56,7 +56,7 @@ public class Game {
                     Collections.min(p.segmentY) < 0) {
 
                 // dead
-                if (deadPlayerBecomeSolid) playerToSolids(p);
+                if (deadPlayersBecomeSolids) playerToSolids(p);
                 players.set(i, null);
                 continue;
 
@@ -74,7 +74,7 @@ public class Game {
                         if (q.segmentX.get(d) == pX && q.segmentY.get(d) == pY) {
 
                             // dead
-                            if (deadPlayerBecomeSolid) playerToSolids(p);
+                            if (deadPlayersBecomeSolids) playerToSolids(p);
                             players.set(i, null);
                             continue outerLoop;
                         }
@@ -82,7 +82,7 @@ public class Game {
                 } else if (p != q && q.segmentX.contains(pX) && q.segmentY.contains(pY)) {
 
                     // dead
-                    if (deadPlayerBecomeSolid) playerToSolids(p);
+                    if (deadPlayersBecomeSolids) playerToSolids(p);
                     players.set(i, null);
                     continue outerLoop;
                 }
@@ -104,7 +104,7 @@ public class Game {
                         // don't die when fruit overlaps solid
                     } else {
                         // dead
-                        if (deadPlayerBecomeSolid) playerToSolids(p);
+                        if (deadPlayersBecomeSolids) playerToSolids(p);
                         players.set(i, null);
                         continue outerLoop;
                     }
