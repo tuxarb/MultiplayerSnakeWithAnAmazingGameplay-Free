@@ -40,7 +40,7 @@ public class ServerFrame extends JFrame {
     }
 
     private ServerFrame() {
-        setTitle("Змеиная ферма (© Жирный Пень, 2017)");
+        setTitle("Змеиная Fерма (© Жирный Пень, 2017)");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 400);
 
