@@ -86,7 +86,9 @@ public class ServerHandler implements ActionListener {
     }
 
     public void stop() {
-
+        server.stop();
+        timer.stop();
+        log("Сервер остановлен. Недолго музыка играла, недолго фраер танцевал");
     }
 
     private void log(String message) {
