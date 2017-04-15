@@ -245,17 +245,21 @@ public class ServerHandler implements ActionListener {
                 break;
             case "addsolid":
                 args = command.substring(command.indexOf(" ") + 1).split(" ");
-                game.getSolidsX().add(Integer.parseInt(args[0]));
-                game.getSolidsY().add(Integer.parseInt(args[1]));
+                int x = Integer.parseInt(args[0]);
+                int y = Integer.parseInt(args[1]);
+                game.getSolidsX().add(x);
+                game.getSolidsY().add(y);
                 log(new Formatter()
-                        .format(ADDING_SOLID_HINT, args[0], args[1])
+                        .format(ADDING_SOLID_HINT, x, y)
                         .toString());
                 break;
             case "removesolid":
                 args = command.substring(command.indexOf(" ") + 1).split(" ");
+                x = Integer.parseInt(args[0]);
+                y = Integer.parseInt(args[1]);
                 for (int i = 0; i < game.getSolidsX().size(); i++)
-                    if (game.getSolidsX().get(i).equals(Integer.valueOf(args[0])) &&
-                            game.getSolidsY().get(i).equals(Integer.valueOf(args[1]))) {
+                    if (game.getSolidsX().get(i).equals(x) &&
+                            game.getSolidsY().get(i).equals(y)) {
                         try {
                             game.getSolidsX().remove(i);
                             game.getSolidsY().remove(i);
@@ -264,7 +268,7 @@ public class ServerHandler implements ActionListener {
                             return;
                         }
                         log(new Formatter()
-                                .format(REMOVING_SOLID_HINT, args[0], args[1])
+                                .format(REMOVING_SOLID_HINT, x, y)
                                 .toString());
                         break;
                     }
