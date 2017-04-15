@@ -16,16 +16,32 @@ public class Game {
     private Random rnd = new Random();
     public  ArrayList<Integer> fruitsX = new ArrayList<>();
     public  ArrayList<Integer> fruitsY = new ArrayList<>();
-    public  ArrayList<Integer> solidX = new ArrayList<>();
-    public  ArrayList<Integer> solidY = new ArrayList<>();
+    public  ArrayList<Integer> solidsX = new ArrayList<>();
+    public  ArrayList<Integer> solidsY = new ArrayList<>();
     public  int highScore = 0;
-    public boolean deadPlayersBecomeSolids = false;
+    private boolean deadPlayersBecomeSolids = false;
 
     public Game(){
         for(int i = 0; i < FRUITS; i++){
             fruitsX.add(rnd.nextInt(WIDTH));
             fruitsY.add(rnd.nextInt(HEIGHT));
         }
+    }
+
+    public boolean isDeadPlayersBecomeSolids() {
+        return deadPlayersBecomeSolids;
+    }
+
+    public void setDeadPlayersBecomeSolids(boolean deadPlayersBecomeSolids) {
+        this.deadPlayersBecomeSolids = deadPlayersBecomeSolids;
+    }
+
+    public ArrayList<Integer> getSolidsX() {
+        return solidsX;
+    }
+
+    public ArrayList<Integer> getSolidsY() {
+        return solidsY;
     }
 
     public void update(){
@@ -96,10 +112,10 @@ public class Game {
             Player p = players.get(i);
             if (p == null) continue;
 
-            for (int j = 0; j < solidX.size(); j++) {
-                if (p.segmentX.get(0) == solidX.get(j) && p.segmentY.get(0) == solidY.get(j)) {
-                    int result = fruitsX.indexOf(solidX.get(j));
-                    if (result > -1 && fruitsY.get(result) == solidY.get(j)) {
+            for (int j = 0; j < solidsX.size(); j++) {
+                if (p.segmentX.get(0) == solidsX.get(j) && p.segmentY.get(0) == solidsY.get(j)) {
+                    int result = fruitsX.indexOf(solidsX.get(j));
+                    if (result > -1 && fruitsY.get(result) == solidsY.get(j)) {
 
                         // don't die when fruit overlaps solid
                     } else {
@@ -141,16 +157,16 @@ public class Game {
         field = new int[WIDTH][HEIGHT];
 
         // solids
-        for (int i = 0; i < solidX.size(); i++) {
+        for (int i = 0; i < solidsX.size(); i++) {
 
             // safezone
-            if (solidX.get(i) < 3 && solidY.get(i) < 3) {
-                solidX.remove(i);
-                solidY.remove(i);
+            if (solidsX.get(i) < 3 && solidsY.get(i) < 3) {
+                solidsX.remove(i);
+                solidsY.remove(i);
                 continue;
             }
 
-            field[solidX.get(i)][solidY.get(i)] = -1;
+            field[solidsX.get(i)][solidsY.get(i)] = -1;
         }
 
         // fruits
@@ -163,10 +179,10 @@ public class Game {
             if (p == null) continue;
             // segments
             for (int i = 0; i < p.segmentX.size(); i++) {
-                field[p.segmentX.get(i)][p.segmentY.get(i)] = p.id;
+                field[p.segmentX.get(i)][p.segmentY.get(i)] = p.getId();
             }
             // head
-            field[p.segmentX.get(0)][p.segmentY.get(0)] = -p.id;
+            field[p.segmentX.get(0)][p.segmentY.get(0)] = -p.getId();
         }
     }
 
@@ -175,8 +191,8 @@ public class Game {
             int x = p.segmentX.get(i);
             int y = p.segmentY.get(i);
             if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                solidX.add(x);
-                solidY.add(y);
+                solidsX.add(x);
+                solidsY.add(y);
             }
         }
 
