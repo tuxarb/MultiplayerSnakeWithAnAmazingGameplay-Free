@@ -294,7 +294,9 @@ public class ServerHandler implements ActionListener {
     }
 
     private void respond(String content, Connection connection) {
-
+        Response response = new Response();
+        response.setContent(content);
+        connection.sendTCP(response);
     }
 
     @Override
