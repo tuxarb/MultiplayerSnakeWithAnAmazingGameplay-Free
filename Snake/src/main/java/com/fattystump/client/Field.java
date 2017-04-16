@@ -3,8 +3,6 @@ package com.fattystump.client;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 class Field extends JPanel {
@@ -12,7 +10,6 @@ class Field extends JPanel {
     private int[][] field;
     private int highscore;
     private int clientId;
-    private Map<Integer, Color> otherSnakesColors = new HashMap<>();
     private final Color CURRENT_SNAKE_COLOR;
     private final int WIDTH;
     private final int HEIGHT;
@@ -40,14 +37,16 @@ class Field extends JPanel {
                         g.setColor(Color.GREEN);
                     } else if (field[x][y] == -1) {         // границы
                         g.setColor(Color.GRAY);
-                    } else if (field[x][y] == clientId) {           // туловище
-                        g.setColor(CURRENT_SNAKE_COLOR);
-                    } else if (field[x][y] == -clientId) {        // голова
+                    } else if (field[x][y] == clientId) {   // туловище
+                        g.setColor(CURRENT_SNAKE_COLOR.darker());
+                    } else if (field[x][y] == -clientId) {  // голова
                         g.setColor(CURRENT_SNAKE_COLOR.brighter());
+                    } else if (field[x][y] == Integer.MAX_VALUE) {
+                        g.setColor(Color.MAGENTA);          // камни
                     } else if (field[x][y] > 1) {           // туловища других змеек
-                        g.setColor(otherSnakesColors.get(field[x][y]));
+                        g.setColor(Color.BLACK.darker());
                     } else if (field[x][y] < -1) {          // головы других
-                        g.setColor(otherSnakesColors.get(-field[x][y]).brighter());
+                        g.setColor(Color.BLACK.brighter());
                     } else {
                         g.setColor(Color.WHITE);
                     }
@@ -75,10 +74,6 @@ class Field extends JPanel {
 
     void setHighscore(int highscore) {
         this.highscore = highscore;
-    }
-
-    Map<Integer, Color> getOtherSnakesColors() {
-        return otherSnakesColors;
     }
 
     void setClientId(int clientId) {

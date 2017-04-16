@@ -48,16 +48,13 @@ class ClientHandler {
                 }
 
                 void handleResponse(String responseContent) {
-                    if (responseContent.startsWith("getNewId")) {
+                    if (responseContent.startsWith("setNewId")) {
                         id = Integer.valueOf(responseContent.split(" ")[1]);
                         field.setClientId(id);
                         score = 0;
                         isAlive = true;
                         field.setInfo(StringFormatter.format(Field.SCORE_INFO, score, field.getHighscore()).getValue());
                     } else if (responseContent.startsWith("update")) {
-                        /**
-                         * Изменить логику на сервере
-                         */
                         String[] content = responseContent.split(" ");
                         int sizeX = Integer.valueOf(content[1]);
                         int sizeY = Integer.valueOf(content[2]);
@@ -90,7 +87,7 @@ class ClientHandler {
                             field.setInfo(String.format("Жми пробел для старта\nРекорд=%d", field.getHighscore()));
                         }
                         field.repaint();
-                    } else if (responseContent.startsWith("death")) {
+                    } else if (responseContent.startsWith("dead")) {
                         int id = Integer.valueOf(responseContent.split(" ")[1]);
                         if (id == ClientHandler.this.id) {
                             ClientHandler.this.id = -1;
@@ -104,13 +101,6 @@ class ClientHandler {
                         field.setInfo(responseContent.split(" ")[1]);
                         isAlive = false;
                         field.repaint();
-                    } else if (responseContent.startsWith("colors")) {
-                        String[] content = responseContent.split(" ");
-                        for (int i = 0; i < content.length; i++) {
-                            String currentColor = content[i];
-                            String[] pair = currentColor.split("-");
-                            field.getOtherSnakesColors().put(Integer.valueOf(pair[0]), Color.decode(pair[1]));
-                        }
                     }
                 }
 
@@ -125,13 +115,11 @@ class ClientHandler {
                     field.repaint();
                     isAlive = false;
                     id = -1;
-                    request("highscore");
-                    request("colors");
+                    request("getHighscore");
                 }
             });
             field.addKeyListener(keywordHandler);
-            request("highscore");
-            request("colors");
+            request("getHighscore");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     field,
@@ -156,6 +144,11 @@ class ClientHandler {
         clientKryo.sendTCP(request);
     }
 
+    void stop() {
+        clientKryo.close();
+        clientKryo.stop();
+    }
+
     private class KeywordHandler implements KeyListener {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
@@ -169,7 +162,7 @@ class ClientHandler {
             } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
                 direction = 3;
             } else if (key == KeyEvent.VK_SPACE && !isAlive) {
-                request("getID " + 0);
+                request("getNewId");
             }
             if (direction != -1 && isAlive) {
                 request("direction " + String.valueOf(id) + " " + String.valueOf(direction));

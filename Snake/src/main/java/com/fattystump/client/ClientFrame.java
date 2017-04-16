@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class ClientFrame extends JFrame {
+class ClientFrame extends JFrame {
+    private ClientHandler clientHandler;
+
     ClientFrame() {
         setTitle("Змейка");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -24,6 +26,9 @@ public class ClientFrame extends JFrame {
                         buttons[1]
                 );
                 if (result == JOptionPane.YES_OPTION) {
+                    if (clientHandler != null) {
+                        clientHandler.stop();
+                    }
                     System.exit(0);
                 }
             }
@@ -41,7 +46,8 @@ public class ClientFrame extends JFrame {
     private void init() {
         Field field = new Field(getWidth(), getHeight());
         add(field);
-        new ClientHandler(field).startHandling();
+        clientHandler = new ClientHandler(field);
+        clientHandler.startHandling();
     }
 
     public static void main(String[] args) {
