@@ -32,7 +32,7 @@ class Player {
         } else {
             return;
         }
-        if (kamikaze >= -1) {
+        if (kamikaze > -1) {
             direction = kamikaze;
         }
 
