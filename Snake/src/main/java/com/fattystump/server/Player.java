@@ -5,22 +5,16 @@ import java.util.ArrayList;
 public class Player {
 
     private int id;
-    public int direction = 0;
-    public int score = 0;
-    public boolean updateScore = false;
+    private int direction = 0;
+    private int score = 0;
+    private boolean updateScore = false;
     private boolean freeze = false;
     public  boolean isFoodEaten = false;
     private int kamikaze = -1;
     private int steps = 1;
     private int step = 0;
-    public String color;
     public ArrayList<Integer> segmentX = new ArrayList<>();
     public ArrayList<Integer> segmentY = new ArrayList<>();
-
-    Player(int id, String color){
-        this(id);
-        this.color = color;
-    }
 
     Player(int id) {
         this.id = id;
@@ -28,12 +22,8 @@ public class Player {
         segmentY.add(0);
     }
 
-    public int getId() {
+    int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getDirection() {
@@ -60,19 +50,19 @@ public class Player {
         this.updateScore = updateScore;
     }
 
-    public boolean isFreeze() {
+    boolean isFreeze() {
         return freeze;
     }
 
-    public void setFreeze(boolean freeze) {
+    void setFreeze(boolean freeze) {
         this.freeze = freeze;
     }
 
-    public int getKamikaze() {
+    int getKamikaze() {
         return kamikaze;
     }
 
-    public void setKamikaze(int kamikaze) {
+    void setKamikaze(int kamikaze) {
         this.kamikaze = kamikaze;
     }
 
@@ -92,14 +82,6 @@ public class Player {
         this.step = step;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public ArrayList<Integer> getSegmentX() {
         return segmentX;
     }
@@ -110,10 +92,6 @@ public class Player {
 
     public ArrayList<Integer> getSegmentY() {
         return segmentY;
-    }
-
-    public void setSegmentY(ArrayList<Integer> segmentY) {
-        this.segmentY = segmentY;
     }
 
     public void move(){

@@ -6,19 +6,19 @@ import java.util.Random;
 
 public class Game {
 
-    public static final int HEIGHT = 36;
-    public static final int WIDTH = 64;
-    public static final int FRUITS = 3;
-    public static final int TICK = 100;
+    static final int HEIGHT = 36;
+    static final int WIDTH = 64;
+    static final int FRUITS = 3;
+    static final int TICK = 100;
 
     public int field[][] = new int[WIDTH][HEIGHT];
     private ArrayList<Player> players = new ArrayList<>();
     private Random rnd = new Random();
-    public  ArrayList<Integer> fruitsX = new ArrayList<>();
-    public  ArrayList<Integer> fruitsY = new ArrayList<>();
-    public  ArrayList<Integer> solidsX = new ArrayList<>();
-    public  ArrayList<Integer> solidsY = new ArrayList<>();
-    public  int highScore = 0;
+    public ArrayList<Integer> fruitsX = new ArrayList<>();
+    public ArrayList<Integer> fruitsY = new ArrayList<>();
+    public ArrayList<Integer> solidsX = new ArrayList<>();
+    public ArrayList<Integer> solidsY = new ArrayList<>();
+    private int highScore = 0;
     private boolean deadPlayersBecomeSolids = false;
 
     public Game(){
@@ -28,20 +28,12 @@ public class Game {
         }
     }
 
-    public boolean isDeadPlayersBecomeSolids() {
-        return deadPlayersBecomeSolids;
+    public int getHighScore() {
+        return highScore;
     }
 
-    public void setDeadPlayersBecomeSolids(boolean deadPlayersBecomeSolids) {
-        this.deadPlayersBecomeSolids = deadPlayersBecomeSolids;
-    }
-
-    public ArrayList<Integer> getSolidsX() {
-        return solidsX;
-    }
-
-    public ArrayList<Integer> getSolidsY() {
-        return solidsY;
+    public void setHighScore(int highScore) {
+        this.highScore = highScore;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -152,8 +144,8 @@ public class Game {
                     fruitsX.set(i, rnd.nextInt(WIDTH));
                     fruitsY.set(i, rnd.nextInt(HEIGHT));
 
-                    p.score++;
-                    p.updateScore = true;
+                    p.setScore(p.getScore() + 1);
+                    p.setUpdateScore(true);
 
                 }
 
