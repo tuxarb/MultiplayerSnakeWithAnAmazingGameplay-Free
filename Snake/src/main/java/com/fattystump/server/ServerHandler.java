@@ -19,18 +19,12 @@ import java.util.HashMap;
 public class ServerHandler implements ActionListener {
 
     private static final String PLAYER_NOT_FOUND_ERROR = "Игрок #%d не найден";
-    private static final String PLAYER_SLOWDOWN_HINT = "Игрок #%d замедлен до %d шагов";
     private static final String PLAYER_KAMIKAZE_HINT = "Игрок #%d становится камикадзе";
     private static final String BAN_IP_HINT = "Был забанен IP %s";
     private static final String UNBAN_IP_HINT = "Был разабанен IP %s";
     private static final String SET_PLAYER_SCORE_HINT = "Игроку #%d присвоено %d очков";
     private static final String SPEED_INCORRECT_VALUE_ERROR = "Некорректное значение уровня скорости";
     private static final String SPEED_CHANGED_HINT = "Скорость была изменена";
-    private static final String GAMEMODE_CHANGED_HINT = "Режим игры был изменен";
-    private static final String ADDING_SOLID_HINT = "Добавлено препятствие с координатами (%d; %d)";
-    private static final String REMOVING_SOLID_HINT = "Удалено препятствие с координатами (%d; %d)";
-    private static final String INCORRECT_COORDINATES_ERROR = "Введены несуществующие координаты";
-    private static final String REMOVING_SOLIDS_HINT = "Все препятствия удалены";
     private static final String UNKNOWN_COMMAND_ERROR = "Че?";
 
     private ServerFrame serverFrame;
@@ -39,13 +33,13 @@ public class ServerHandler implements ActionListener {
     private ArrayList<Integer> deadIds = new ArrayList<>();
     private HashMap<Integer, Integer> clients = new HashMap<>();
     private ArrayList<String> banList = new ArrayList<>();
-    public Timer timer;
+    private Timer timer;
 
-    public ServerHandler(ServerFrame serverFrame) {
+    ServerHandler(ServerFrame serverFrame) {
         this.serverFrame = serverFrame;
     }
 
-    public void start() {
+    void start() {
         server = new Server(8192, 8192);
         server.start();
 
@@ -164,21 +158,6 @@ public class ServerHandler implements ActionListener {
                 if (!player.isFreeze()) return;
                 player.setFreeze(!player.isFreeze());
                 break;
-            case "slowdown":
-                String args[] = command.substring(command.indexOf(" ") + 1).split(" ");
-                playerId = Integer.valueOf(args[0]);
-                player = getPlayerById(playerId);
-                if (player == null) {
-                    log(new Formatter()
-                            .format(PLAYER_NOT_FOUND_ERROR, playerId)
-                            .toString());
-                    return;
-                }
-                player.setSteps(Integer.valueOf(args[1]));
-                log(new Formatter()
-                        .format(PLAYER_SLOWDOWN_HINT, player.getId(), player.getSteps())
-                        .toString());
-                break;
             case "kamikaze":
                 playerId = Integer.parseInt(
                         command.substring(command.indexOf(" ") + 1));
@@ -215,7 +194,7 @@ public class ServerHandler implements ActionListener {
                         .toString());
                 break;
             case "score":
-                args = command.substring(command.indexOf(" ") + 1).split(" ");
+                String args[] = command.substring(command.indexOf(" ") + 1).split(" ");
                 playerId = Integer.valueOf(args[0]);
                 player = getPlayerById(playerId);
                 if (player == null) {
@@ -237,46 +216,6 @@ public class ServerHandler implements ActionListener {
                 }
                 timer.setDelay((10 - (-speedLevel)) * 10);
                 log(SPEED_CHANGED_HINT);
-                break;
-            case "gamemode":
-                int mode = Integer.valueOf(command.substring(command.indexOf(" ") + 1));
-                game.setDeadPlayersBecomeSolids(mode == 1);
-                log(GAMEMODE_CHANGED_HINT);
-                break;
-            case "addsolid":
-                args = command.substring(command.indexOf(" ") + 1).split(" ");
-                int x = Integer.parseInt(args[0]);
-                int y = Integer.parseInt(args[1]);
-                game.getSolidsX().add(x);
-                game.getSolidsY().add(y);
-                log(new Formatter()
-                        .format(ADDING_SOLID_HINT, x, y)
-                        .toString());
-                break;
-            case "removesolid":
-                args = command.substring(command.indexOf(" ") + 1).split(" ");
-                x = Integer.parseInt(args[0]);
-                y = Integer.parseInt(args[1]);
-                for (int i = 0; i < game.getSolidsX().size(); i++)
-                    if (game.getSolidsX().get(i).equals(x) &&
-                            game.getSolidsY().get(i).equals(y)) {
-                        try {
-                            game.getSolidsX().remove(i);
-                            game.getSolidsY().remove(i);
-                        } catch (IndexOutOfBoundsException e) {
-                            log(INCORRECT_COORDINATES_ERROR);
-                            return;
-                        }
-                        log(new Formatter()
-                                .format(REMOVING_SOLID_HINT, x, y)
-                                .toString());
-                        break;
-                    }
-                break;
-            case "removeallsolids":
-                game.getSolidsX().clear();
-                game.getSolidsY().clear();
-                log(REMOVING_SOLIDS_HINT);
                 break;
             default:
                 log(UNKNOWN_COMMAND_ERROR);
