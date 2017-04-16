@@ -32,7 +32,6 @@ class ClientHandler {
         clientKryo = new Client(3500, 3500);
         clientKryo.start();
         field.setInfo(String.format(Field.SCORE_INFO, score, field.getHighscore()));
-        System.out.println(field.getInfo());
         try {
             Kryo kryo = clientKryo.getKryo();
             kryo.register(Request.class);
@@ -51,6 +50,7 @@ class ClientHandler {
                 void handleResponse(String responseContent) {
                     if (responseContent.startsWith("getNewId")) {
                         id = Integer.valueOf(responseContent.split(" ")[1]);
+                        field.setClientId(id);
                         score = 0;
                         isAlive = true;
                         field.setInfo(StringFormatter.format(Field.SCORE_INFO, score, field.getHighscore()).getValue());

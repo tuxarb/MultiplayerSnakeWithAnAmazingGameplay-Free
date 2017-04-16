@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class ClientFrame extends JFrame {
-
     ClientFrame() {
         setTitle("Змейка");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
