@@ -6,29 +6,50 @@ import java.util.Random;
 
 public class Game {
 
-    public static final int HEIGHT = 36;
-    public static final int WIDTH = 64;
-    public static final int FRUITS = 3;
-    public static final int TICK = 100;
+    static final int HEIGHT = 36;
+    static final int WIDTH = 64;
+    static final int FRUITS = 3;
+    static final int TICK = 100;
+    static final int STONES = 3;
 
     public int field[][] = new int[WIDTH][HEIGHT];
-    public ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
     private Random rnd = new Random();
+
     public  ArrayList<Integer> fruitsX = new ArrayList<>();
     public  ArrayList<Integer> fruitsY = new ArrayList<>();
-    public  ArrayList<Integer> solidX = new ArrayList<>();
-    public  ArrayList<Integer> solidY = new ArrayList<>();
+    public  ArrayList<Integer> solidsX = new ArrayList<>();
+    public  ArrayList<Integer> solidsY = new ArrayList<>();
+    public ArrayList<Integer> stoneX = new ArrayList<>();
+    public ArrayList<Integer> stoneY = new ArrayList<>();
     public  int highScore = 0;
-    public boolean deadPlayerBecomeSolid = false;
+
+    private boolean deadPlayersBecomeSolids = false;
 
     public Game(){
         for(int i = 0; i < FRUITS; i++){
             fruitsX.add(rnd.nextInt(WIDTH));
             fruitsY.add(rnd.nextInt(HEIGHT));
         }
+        for (int i = 0; i < STONES; i++){
+            stoneX.add(rnd.nextInt(WIDTH));
+            stoneY.add(rnd.nextInt(HEIGHT));
+        }
     }
 
-    public void update(){
+    int getHighScore() {
+        return highScore;
+    }
+
+    void setHighScore(int highScore) {
+        this.highScore = highScore;
+    }
+
+    ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    void update(){
         move();
         checkCollisions();
         checkSolids();
@@ -56,7 +77,7 @@ public class Game {
                     Collections.min(p.segmentY) < 0) {
 
                 // dead
-                if (deadPlayerBecomeSolid) playerToSolids(p);
+                if (deadPlayersBecomeSolids) playerToSolids(p);
                 players.set(i, null);
                 continue;
 
@@ -65,54 +86,58 @@ public class Game {
             // other players
             int pX = p.segmentX.get(0);
             int pY = p.segmentY.get(0);
-            for (Player q : players) {
+            for (int j = 0; j < players.size(); j++) {
+                Player q = players.get(j);
                 if (q == null) continue;
 
-                if (p == q) {
-
+                if (p.equals(q)) {
                     for (int d = 1; d < q.segmentX.size(); d++) {
                         if (q.segmentX.get(d) == pX && q.segmentY.get(d) == pY) {
-
                             // dead
-                            if (deadPlayerBecomeSolid) playerToSolids(p);
+                            if (deadPlayersBecomeSolids) playerToSolids(p);
                             players.set(i, null);
                             continue outerLoop;
-                        }
-                    }
-                } else if (p != q && q.segmentX.contains(pX) && q.segmentY.contains(pY)) {
 
-                    // dead
-                    if (deadPlayerBecomeSolid) playerToSolids(p);
+                        }
+
+                    }
+
+                } else if (q.segmentX.indexOf(pX) == 0 && q.segmentY.indexOf(pY) == 0){
+                    players.set(i, null);
+                    players.set(j, null);
+                    continue outerLoop;
+                } else if (q.segmentX.contains(pX) && q.segmentY.contains(pY)) {
+                    for (int t = q.segmentY.size() - 1; t >= q.segmentX.indexOf(pX); t--)
+                        q.segmentY.remove(t);
+                    q.segmentX.removeAll(q.segmentX.subList(q.segmentX.indexOf(pX), q.segmentX.size()));
                     players.set(i, null);
                     continue outerLoop;
                 }
             }
+
         }
     }
 
     private void checkSolids() {
-        outerLoop:
-        for (int i = 0; i < players.size(); i++) {
-            Player p = players.get(i);
+
+        for (Player p : players) {
             if (p == null) continue;
 
-            for (int j = 0; j < solidX.size(); j++) {
-                if (p.segmentX.get(0) == solidX.get(j) && p.segmentY.get(0) == solidY.get(j)) {
-                    int result = fruitsX.indexOf(solidX.get(j));
-                    if (result > -1 && fruitsY.get(result) == solidY.get(j)) {
+            for (int i = 0; i < STONES; i++) {
 
-                        // don't die when fruit overlaps solid
-                    } else {
-                        // dead
-                        if (deadPlayerBecomeSolid) playerToSolids(p);
-                        players.set(i, null);
-                        continue outerLoop;
-                    }
+                if (p.segmentX.get(0) == stoneX.get(i) && p.segmentY.get(0) == stoneY.get(i)) {
+
+                    stoneX.set(i, rnd.nextInt(WIDTH));
+                    stoneY.set(i, rnd.nextInt(HEIGHT));
+                    players.set(players.indexOf(p), null);
+
                 }
-            }
-        }
-    }
 
+            }
+
+        }
+
+    }
     private void checkFruits() {
 
         for (Player p : players) {
@@ -125,8 +150,8 @@ public class Game {
                     fruitsX.set(i, rnd.nextInt(WIDTH));
                     fruitsY.set(i, rnd.nextInt(HEIGHT));
 
-                    p.score++;
-                    p.updateScore = true;
+                    p.setScore(p.getScore() + 1);
+                    p.setUpdateScore(true);
 
                 }
 
@@ -141,16 +166,16 @@ public class Game {
         field = new int[WIDTH][HEIGHT];
 
         // solids
-        for (int i = 0; i < solidX.size(); i++) {
+        for (int i = 0; i < solidsX.size(); i++) {
 
             // safezone
-            if (solidX.get(i) < 3 && solidY.get(i) < 3) {
-                solidX.remove(i);
-                solidY.remove(i);
+            if (solidsX.get(i) < 3 && solidsY.get(i) < 3) {
+                solidsX.remove(i);
+                solidsY.remove(i);
                 continue;
             }
 
-            field[solidX.get(i)][solidY.get(i)] = -1;
+            field[solidsX.get(i)][solidsY.get(i)] = -1;
         }
 
         // fruits
@@ -158,15 +183,19 @@ public class Game {
             field[fruitsX.get(i)][fruitsY.get(i)] = 1;
         }
 
+        // Stones
+        for (int i = 0; i < STONES; i++) {
+            field[stoneX.get(i)][stoneY.get(i)] = Integer.MAX_VALUE;
+        }
         // players
         for (Player p : players) {
             if (p == null) continue;
             // segments
             for (int i = 0; i < p.segmentX.size(); i++) {
-                field[p.segmentX.get(i)][p.segmentY.get(i)] = p.id;
+                field[p.segmentX.get(i)][p.segmentY.get(i)] = p.getId();
             }
             // head
-            field[p.segmentX.get(0)][p.segmentY.get(0)] = -p.id;
+            field[p.segmentX.get(0)][p.segmentY.get(0)] = -p.getId();
         }
     }
 
@@ -175,8 +204,8 @@ public class Game {
             int x = p.segmentX.get(i);
             int y = p.segmentY.get(i);
             if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                solidX.add(x);
-                solidY.add(y);
+                solidsX.add(x);
+                solidsY.add(y);
             }
         }
 

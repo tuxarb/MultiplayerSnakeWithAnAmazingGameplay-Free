@@ -7,9 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SnakeServer extends JFrame {
+public class ServerFrame extends JFrame {
 
-    // TODO: добавить серверный обработчик (класс ServerHandler)
+    private ServerHandler serverHandler;
     private JButton buttonStart;
     private JButton buttonStop;
     private JTextPane textLog;
@@ -39,8 +39,8 @@ public class SnakeServer extends JFrame {
         this.textLog = textLog;
     }
 
-    private SnakeServer() {
-        setTitle("Multiplayer Snake Server (© 2017 Fatty Stump)");
+    private ServerFrame() {
+        setTitle("Змеиная Fерма (© Жирный Пень, 2017)");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 400);
 
@@ -52,18 +52,26 @@ public class SnakeServer extends JFrame {
         JPanel panel = new JPanel();
         contentPane.add(panel, BorderLayout.NORTH);
 
-        buttonStart = new JButton("Start");
+        buttonStart = new JButton("Старт");
         buttonStart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: запуск сервера через экземпляр серверного обработчика
+                serverHandler = new ServerHandler(ServerFrame.this);
+                serverHandler.start();
+                buttonStart.setEnabled(false);
+                buttonStop.setEnabled(true);
+                textCmd.setEnabled(true);
             }
         });
         panel.add(buttonStart);
 
-        buttonStop = new JButton("Stop");
+        buttonStop = new JButton("Стоп");
         buttonStop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: остановка сервера через экземпляр серверного обработчика
+                serverHandler.stop();
+                buttonStart.setEnabled(true);
+                buttonStop.setEnabled(false);
+                textCmd.setText("");
+                textCmd.setEnabled(false);
             }
         });
         buttonStop.setEnabled(false);
@@ -80,12 +88,14 @@ public class SnakeServer extends JFrame {
         textCmd = new JTextField();
         textCmd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: выполнение команды на сервере через экземпляр серверного обработчика
+                if (serverHandler != null)
+                    serverHandler.handleCommand(textCmd.getText());
                 textCmd.setText("");
             }
         });
         contentPane.add(textCmd, BorderLayout.SOUTH);
         textCmd.setColumns(10);
+        textCmd.setEnabled(false);
 
         DefaultCaret caret = (DefaultCaret)textLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -96,7 +106,7 @@ public class SnakeServer extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    SnakeServer frame = new SnakeServer();
+                    ServerFrame frame = new ServerFrame();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

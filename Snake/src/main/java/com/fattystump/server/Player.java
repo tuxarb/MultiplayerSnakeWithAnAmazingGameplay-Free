@@ -4,23 +4,94 @@ import java.util.ArrayList;
 
 public class Player {
 
-    public int id;
-    public int direction = 0;
-    public int score = 0;
-    public boolean updateScore = false;
-    public boolean freeze = false;
-    public int kamikaze = -1;
-    public int steps = 1;
-    public int step = 0;
-    public String color;
+    private int id;
+    private int direction = 0;
+    private int score = 0;
+    private boolean updateScore = false;
+    private boolean freeze = false;
+    public  boolean isFoodEaten = false;
+    private int kamikaze = -1;
+    private int steps = 1;
+    private int step = 0;
     public ArrayList<Integer> segmentX = new ArrayList<>();
     public ArrayList<Integer> segmentY = new ArrayList<>();
 
-    public Player(int id, String color){
+    Player(int id) {
         this.id = id;
-        this.color = color;
         segmentX.add(0);
         segmentY.add(0);
+    }
+
+    int getId() {
+        return id;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public boolean isUpdateScore() {
+        return updateScore;
+    }
+
+    public void setUpdateScore(boolean updateScore) {
+        this.updateScore = updateScore;
+    }
+
+    boolean isFreeze() {
+        return freeze;
+    }
+
+    void setFreeze(boolean freeze) {
+        this.freeze = freeze;
+    }
+
+    int getKamikaze() {
+        return kamikaze;
+    }
+
+    void setKamikaze(int kamikaze) {
+        this.kamikaze = kamikaze;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
+    public ArrayList<Integer> getSegmentX() {
+        return segmentX;
+    }
+
+    public void setSegmentX(ArrayList<Integer> segmentX) {
+        this.segmentX = segmentX;
+    }
+
+    public ArrayList<Integer> getSegmentY() {
+        return segmentY;
     }
 
     public void move(){
@@ -64,9 +135,10 @@ public class Player {
                 break;
         }
         //add segment
-        if (score >= segmentX.size()){
+        if (isFoodEaten){
             segmentX.add(lastX);
             segmentY.add(lastY);
+            isFoodEaten = false;
         }
     }
 }
