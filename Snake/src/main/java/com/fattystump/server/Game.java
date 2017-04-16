@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class Game {
-    
+
     static final int HEIGHT = 36;
     static final int WIDTH = 64;
     static final int FRUITS = 3;
