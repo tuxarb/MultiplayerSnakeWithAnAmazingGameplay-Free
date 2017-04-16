@@ -79,7 +79,7 @@ public class ServerHandler implements ActionListener {
                     log("Игровой клиент " + connection.getID() + " отсоединился");
                     if (clients.containsKey(connection.getID())) {
                         int playerID = clients.get(connection.getID());
-                        game.players.set(playerID, null);
+                        game.getPlayers().set(playerID - 2, null);
                         log("Игрок #" + playerID + " удален");
                         deadIds.add(playerID);
                         clients.remove(connection.getID());
@@ -117,16 +117,11 @@ public class ServerHandler implements ActionListener {
         /** COMMANDS LIST:
          * freeze {id}
          * unfreeze {id}
-         * slowdown {id} {steps}
          * kamikaze {id}
          * ban {ip}
          * unban {ip}
          * score {id} {score}
          * speed {level} | level in [-9;9]
-         * gamemode {mode} | 0 - normal, 1 - deadPlayersBecomeSolids
-         * addsolid {x} {y}
-         * remsolid {x} {y}
-         * clearsolids
          */
         System.out.println("Command: " + command);
 
@@ -225,7 +220,7 @@ public class ServerHandler implements ActionListener {
     private Player getPlayerById(int playerId) {
         Player player;
         try {
-            player = game.players.get(playerId);
+            player = game.getPlayers().get(playerId - 2);
         } catch (IndexOutOfBoundsException e) {
             return null;
         }

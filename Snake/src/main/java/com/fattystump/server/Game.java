@@ -12,7 +12,7 @@ public class Game {
     public static final int TICK = 100;
 
     public int field[][] = new int[WIDTH][HEIGHT];
-    public ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
     private Random rnd = new Random();
     public  ArrayList<Integer> fruitsX = new ArrayList<>();
     public  ArrayList<Integer> fruitsY = new ArrayList<>();
@@ -42,6 +42,10 @@ public class Game {
 
     public ArrayList<Integer> getSolidsY() {
         return solidsY;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
     public void update(){
