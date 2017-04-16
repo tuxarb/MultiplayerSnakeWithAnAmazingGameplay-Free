@@ -16,8 +16,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 
-public class ServerHandler implements ActionListener {
-
+class ServerHandler implements ActionListener {
     private static final String PLAYER_NOT_FOUND_ERROR = "Игрок #%d не найден";
     private static final String PLAYER_KAMIKAZE_HINT = "Игрок #%d становится камикадзе";
     private static final String BAN_IP_HINT = "Был забанен IP %s";
@@ -29,7 +28,6 @@ public class ServerHandler implements ActionListener {
     private static final String NEW_PLAYER_JOINED_HINT = "Игрок #%d (игровой клиент  %d) присоединился к игре";
     private static final String NEW_HIGHSCORE_HINT = "Игрок #%d установил новый рекорд - %d";
     private static final String PLAYER_DEATH_HINT = "Игрок #%d умирает. Светлая память";
-
     private ServerFrame serverFrame;
     private Server server;
     private Game game;
@@ -43,7 +41,7 @@ public class ServerHandler implements ActionListener {
     }
 
     void start() {
-        server = new Server(8192, 8192);
+        server = new Server(6000, 6000);
         server.start();
 
         try {
@@ -100,7 +98,7 @@ public class ServerHandler implements ActionListener {
         }
     }
 
-    public void stop() {
+    void stop() {
         server.stop();
         timer.stop();
         log("Сервер остановлен. Недолго музыка играла, недолго фраер танцевал");
@@ -116,7 +114,7 @@ public class ServerHandler implements ActionListener {
                         "\n");
     }
 
-    public void handleCommand(String command) {
+    void handleCommand(String command) {
         /** COMMANDS LIST:
          * freeze {id}
          * unfreeze {id}
@@ -309,7 +307,6 @@ public class ServerHandler implements ActionListener {
                         .format(PLAYER_DEATH_HINT, (i + 2))
                         .toString());
             }
-
         }
     }
 }

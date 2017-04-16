@@ -13,7 +13,7 @@ class Field extends JPanel {
     private final Color CURRENT_SNAKE_COLOR;
     private final int WIDTH;
     private final int HEIGHT;
-    private final static int SEGMENT_SIZE = 25;
+    private final static int SEGMENT_SIZE = 20;
     static String SCORE_INFO = "Ваши очки=%d\nРекорд=%d";
 
     Field(int width, int height) {
@@ -31,8 +31,8 @@ class Field extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (field != null) {
-            for (int x = 0; x < WIDTH; x++) {
-                for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < 64; x++) {
+                for (int y = 0; y < 36; y++) {
                     if (field[x][y] == 1) {                 // еда
                         g.setColor(Color.GREEN);
                     } else if (field[x][y] == -1) {         // границы
@@ -42,7 +42,7 @@ class Field extends JPanel {
                     } else if (field[x][y] == -clientId) {  // голова
                         g.setColor(CURRENT_SNAKE_COLOR.brighter());
                     } else if (field[x][y] == Integer.MAX_VALUE) {
-                        g.setColor(Color.MAGENTA);          // камни
+                        g.setColor(Color.GRAY);          // камни
                     } else if (field[x][y] > 1) {           // туловища других змеек
                         g.setColor(Color.BLACK.darker());
                     } else if (field[x][y] < -1) {          // головы других

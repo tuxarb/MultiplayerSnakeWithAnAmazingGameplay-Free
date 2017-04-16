@@ -7,42 +7,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerFrame extends JFrame {
-
+class ServerFrame extends JFrame {
     private ServerHandler serverHandler;
     private JButton buttonStart;
     private JButton buttonStop;
     private JTextPane textLog;
     private JTextField textCmd;
 
-    public JButton getButtonStart() {
-        return buttonStart;
-    }
-
-    public void setButtonStart(JButton buttonStart) {
-        this.buttonStart = buttonStart;
-    }
-
-    public JButton getButtonStop() {
-        return buttonStop;
-    }
-
-    public void setButtonStop(JButton buttonStop) {
-        this.buttonStop = buttonStop;
-    }
-
-    public JTextPane getTextLog() {
-        return textLog;
-    }
-
-    public void setTextLog(JTextPane textLog) {
-        this.textLog = textLog;
-    }
-
     private ServerFrame() {
         setTitle("Змеиная Fерма (© Жирный Пень, 2017)");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 400);
+        setLocationRelativeTo(null);
 
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -97,9 +73,12 @@ public class ServerFrame extends JFrame {
         textCmd.setColumns(10);
         textCmd.setEnabled(false);
 
-        DefaultCaret caret = (DefaultCaret)textLog.getCaret();
+        DefaultCaret caret = (DefaultCaret) textLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+    }
 
+    JTextPane getTextLog() {
+        return textLog;
     }
 
     public static void main(String[] args) {

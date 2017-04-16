@@ -4,52 +4,36 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class Game {
-
+class Game {
     static final int HEIGHT = 36;
     static final int WIDTH = 64;
-    static final int FRUITS = 3;
     static final int TICK = 100;
-    static final int STONES = 3;
-
-    public int field[][] = new int[WIDTH][HEIGHT];
+    private static final int FRUITS = 3;
+    private static final int STONES = 3;
+    int field[][] = new int[WIDTH][HEIGHT];
     private ArrayList<Player> players = new ArrayList<>();
     private Random rnd = new Random();
+    private ArrayList<Integer> fruitsX = new ArrayList<>();
+    private ArrayList<Integer> fruitsY = new ArrayList<>();
+    private ArrayList<Integer> solidsX = new ArrayList<>();
+    private ArrayList<Integer> solidsY = new ArrayList<>();
+    private ArrayList<Integer> stoneX = new ArrayList<>();
+    private ArrayList<Integer> stoneY = new ArrayList<>();
+    private int highScore;
+    private boolean deadPlayersBecomeSolids;
 
-    public  ArrayList<Integer> fruitsX = new ArrayList<>();
-    public  ArrayList<Integer> fruitsY = new ArrayList<>();
-    public  ArrayList<Integer> solidsX = new ArrayList<>();
-    public  ArrayList<Integer> solidsY = new ArrayList<>();
-    public ArrayList<Integer> stoneX = new ArrayList<>();
-    public ArrayList<Integer> stoneY = new ArrayList<>();
-    public  int highScore = 0;
-
-    private boolean deadPlayersBecomeSolids = false;
-
-    public Game(){
-        for(int i = 0; i < FRUITS; i++){
+    Game() {
+        for (int i = 0; i < FRUITS; i++) {
             fruitsX.add(rnd.nextInt(WIDTH));
             fruitsY.add(rnd.nextInt(HEIGHT));
         }
-        for (int i = 0; i < STONES; i++){
+        for (int i = 0; i < STONES; i++) {
             stoneX.add(rnd.nextInt(WIDTH));
             stoneY.add(rnd.nextInt(HEIGHT));
         }
     }
 
-    int getHighScore() {
-        return highScore;
-    }
-
-    void setHighScore(int highScore) {
-        this.highScore = highScore;
-    }
-
-    ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    void update(){
+    void update() {
         move();
         checkCollisions();
         checkSolids();
@@ -57,39 +41,34 @@ public class Game {
         updateField();
     }
 
-    private void move(){
-        for(Player p : players){
+    private void move() {
+        for (Player p : players) {
             if (p == null) continue;
             p.move();
         }
     }
 
-    private void checkCollisions(){
+    private void checkCollisions() {
         outerLoop:
-        for(int i = 0; i < players.size(); i++){
+        for (int i = 0; i < players.size(); i++) {
             Player p = players.get(i);
             if (p == null) continue;
-
             //borders
             if (Collections.max(p.segmentX) >= WIDTH ||
-                Collections.max(p.segmentY) >= HEIGHT ||
+                    Collections.max(p.segmentY) >= HEIGHT ||
                     Collections.min(p.segmentX) < 0 ||
                     Collections.min(p.segmentY) < 0) {
-
                 // dead
                 if (deadPlayersBecomeSolids) playerToSolids(p);
                 players.set(i, null);
                 continue;
-
             }
-
             // other players
             int pX = p.segmentX.get(0);
             int pY = p.segmentY.get(0);
             for (int j = 0; j < players.size(); j++) {
                 Player q = players.get(j);
                 if (q == null) continue;
-
                 if (p.equals(q)) {
                     for (int d = 1; d < q.segmentX.size(); d++) {
                         if (q.segmentX.get(d) == pX && q.segmentY.get(d) == pY) {
@@ -97,12 +76,9 @@ public class Game {
                             if (deadPlayersBecomeSolids) playerToSolids(p);
                             players.set(i, null);
                             continue outerLoop;
-
                         }
-
                     }
-
-                } else if (q.segmentX.indexOf(pX) == 0 && q.segmentY.indexOf(pY) == 0){
+                } else if (q.segmentX.indexOf(pX) == 0 && q.segmentY.indexOf(pY) == 0) {
                     players.set(i, null);
                     players.set(j, null);
                     continue outerLoop;
@@ -114,67 +90,46 @@ public class Game {
                     continue outerLoop;
                 }
             }
-
         }
     }
 
     private void checkSolids() {
-
         for (Player p : players) {
             if (p == null) continue;
-
             for (int i = 0; i < STONES; i++) {
-
                 if (p.segmentX.get(0) == stoneX.get(i) && p.segmentY.get(0) == stoneY.get(i)) {
-
                     stoneX.set(i, rnd.nextInt(WIDTH));
                     stoneY.set(i, rnd.nextInt(HEIGHT));
                     players.set(players.indexOf(p), null);
-
                 }
-
             }
-
         }
-
     }
-    private void checkFruits() {
 
+    private void checkFruits() {
         for (Player p : players) {
             if (p == null) continue;
-
             for (int i = 0; i < FRUITS; i++) {
-
                 if (p.segmentX.get(0) == fruitsX.get(i) && p.segmentY.get(0) == fruitsY.get(i)) {
-
                     fruitsX.set(i, rnd.nextInt(WIDTH));
                     fruitsY.set(i, rnd.nextInt(HEIGHT));
-
                     p.setScore(p.getScore() + 1);
                     p.setUpdateScore(true);
-
                 }
-
             }
-
         }
-
     }
 
     private void updateField() {
-
         field = new int[WIDTH][HEIGHT];
-
         // solids
         for (int i = 0; i < solidsX.size(); i++) {
-
             // safezone
             if (solidsX.get(i) < 3 && solidsY.get(i) < 3) {
                 solidsX.remove(i);
                 solidsY.remove(i);
                 continue;
             }
-
             field[solidsX.get(i)][solidsY.get(i)] = -1;
         }
 
@@ -208,6 +163,17 @@ public class Game {
                 solidsY.add(y);
             }
         }
+    }
 
+    int getHighScore() {
+        return highScore;
+    }
+
+    void setHighScore(int highScore) {
+        this.highScore = highScore;
+    }
+
+    ArrayList<Player> getPlayers() {
+        return players;
     }
 }

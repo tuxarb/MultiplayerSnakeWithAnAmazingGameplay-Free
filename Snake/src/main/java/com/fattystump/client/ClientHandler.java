@@ -10,7 +10,6 @@ import com.fattystump.Response;
 import com.sun.javafx.binding.StringFormatter;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.InetAddress;
@@ -29,7 +28,7 @@ class ClientHandler {
     }
 
     void startHandling() {
-        clientKryo = new Client(3500, 3500);
+        clientKryo = new Client(6000, 6000);
         clientKryo.start();
         field.setInfo(String.format(Field.SCORE_INFO, score, field.getHighscore()));
         try {
@@ -162,6 +161,7 @@ class ClientHandler {
             } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
                 direction = 3;
             } else if (key == KeyEvent.VK_SPACE && !isAlive) {
+                System.out.println(123);
                 request("getNewId");
             }
             if (direction != -1 && isAlive) {

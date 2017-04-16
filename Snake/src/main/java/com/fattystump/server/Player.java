@@ -2,19 +2,18 @@ package com.fattystump.server;
 
 import java.util.ArrayList;
 
-public class Player {
-
+class Player {
+    ArrayList<Integer> segmentX = new ArrayList<>();
+    ArrayList<Integer> segmentY = new ArrayList<>();
+    private boolean isFoodEaten = false;
+    private int kamikaze = -1;
+    private int steps = 1;
+    private int step = 0;
     private int id;
     private int direction = 0;
     private int score = 0;
     private boolean updateScore = false;
     private boolean freeze = false;
-    public  boolean isFoodEaten = false;
-    private int kamikaze = -1;
-    private int steps = 1;
-    private int step = 0;
-    public ArrayList<Integer> segmentX = new ArrayList<>();
-    public ArrayList<Integer> segmentY = new ArrayList<>();
 
     Player(int id) {
         this.id = id;
@@ -22,31 +21,82 @@ public class Player {
         segmentY.add(0);
     }
 
+    void move() {
+        //server commands
+        if (freeze) {
+            return;
+        }
+        step++;
+        if (step >= steps) {
+            step = 0;
+        } else {
+            return;
+        }
+        if (kamikaze >= -1) {
+            direction = kamikaze;
+        }
+
+        //save last segment (to add a new one)
+        int lastX = segmentX.get(segmentX.size() - 1);
+        int lastY = segmentY.get(segmentY.size() - 1);
+
+        //move segments
+        for (int i = segmentX.size() - 1; i > 0; i--) {
+            segmentX.set(i, segmentX.get(i - 1));
+            segmentY.set(i, segmentY.get(i - 1));
+        }
+        // move head in direction
+        switch (direction) {
+            //Right
+            case 0:
+                segmentX.set(0, segmentX.get(0) + 1);
+                break;
+            //Up
+            case 1:
+                segmentY.set(0, segmentY.get(0) - 1);
+                break;
+            //Left
+            case 2:
+                segmentX.set(0, segmentX.get(0) - 1);
+                break;
+            //Down
+            case 3:
+                segmentY.set(0, segmentY.get(0) + 1);
+                break;
+        }
+        //add segment
+        if (isFoodEaten) {
+            segmentX.add(lastX);
+            segmentY.add(lastY);
+            isFoodEaten = false;
+        }
+    }
+
     int getId() {
         return id;
     }
 
-    public int getDirection() {
+    int getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
+    void setDirection(int direction) {
         this.direction = direction;
     }
 
-    public int getScore() {
+    int getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    void setScore(int score) {
         this.score = score;
     }
 
-    public boolean isUpdateScore() {
+    boolean isUpdateScore() {
         return updateScore;
     }
 
-    public void setUpdateScore(boolean updateScore) {
+    void setUpdateScore(boolean updateScore) {
         this.updateScore = updateScore;
     }
 
@@ -92,53 +142,5 @@ public class Player {
 
     public ArrayList<Integer> getSegmentY() {
         return segmentY;
-    }
-
-    public void move(){
-        //server commands
-        if (freeze) return;
-        step++;
-        if(step >= steps){
-            step = 0;
-        }
-        else{
-            return;
-        }
-        if (kamikaze >= -1) direction = kamikaze;
-
-        //save last segment (to add a new one)
-        int lastX = segmentX.get(segmentX.size()-1);
-        int lastY = segmentY.get(segmentY.size()-1);
-
-        //move segments
-        for(int i = segmentX.size() - 1; i > 0; i--){
-            segmentX.set(i,segmentX.get(i-1));
-            segmentY.set(i,segmentY.get(i-1));
-        }
-        // move head in direction
-        switch (direction) {
-            //Right
-            case 0:
-                segmentX.set(0, segmentX.get(0) + 1);
-                break;
-            //Up
-            case 1:
-                segmentY.set(0, segmentY.get(0) - 1);
-                break;
-            //Left
-            case 2:
-                segmentX.set(0, segmentX.get(0) - 1);
-                break;
-            //Down
-            case 3:
-                segmentY.set(0, segmentY.get(0) + 1);
-                break;
-        }
-        //add segment
-        if (isFoodEaten){
-            segmentX.add(lastX);
-            segmentY.add(lastY);
-            isFoodEaten = false;
-        }
     }
 }
