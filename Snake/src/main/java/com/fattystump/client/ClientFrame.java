@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 class ClientFrame extends JFrame {
     private ClientHandler clientHandler;
 
-    ClientFrame() {
+    private ClientFrame() {
         setTitle("Змейка");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -33,19 +33,19 @@ class ClientFrame extends JFrame {
                 }
             }
         });
-        setSize(
-                Toolkit.getDefaultToolkit().getScreenSize().width - 200,
-                Toolkit.getDefaultToolkit().getScreenSize().height - 200
-        );
-        setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
         init();
     }
 
     private void init() {
-        Field field = new Field(getWidth(), getHeight());
-        add(field);
+        JPanel contentPane = new JPanel();
+        contentPane.setLayout(new BorderLayout(0, 0));
+        setContentPane(contentPane);
+        Field field = new Field();
+        contentPane.add(field);
+        pack();
+        setLocationRelativeTo(null);
         clientHandler = new ClientHandler(field, this);
         clientHandler.startHandling();
     }

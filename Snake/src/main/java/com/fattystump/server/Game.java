@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-class Game {
-    static final int HEIGHT = 36;
-    static final int WIDTH = 64;
+public class Game {
+    public static final int HEIGHT = 30;
+    public static final int WIDTH = 64;
     static final int TICK = 100;
     private static final int FRUITS = 3;
     private static final int STONES = 3;

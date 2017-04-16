@@ -65,9 +65,7 @@ class ClientHandler {
                         for (int i = 0; i < y.length; i++) {
                             String[] x = y[i].split(":");
                             for (int j = 0; j < x.length; j++) {
-                                if (!x[j].equals("")) {
-                                    field[j][i] = Integer.valueOf(x[j]);
-                                }
+                                field[j][i] = Integer.valueOf(x[j]);
                             }
                         }
                         if (!isAlive) {
