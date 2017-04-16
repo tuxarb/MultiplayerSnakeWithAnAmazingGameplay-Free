@@ -2,12 +2,33 @@ package com.fattystump.client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ClientFrame extends JFrame {
 
     ClientFrame() {
-        setTitle("Snake");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("Змейка");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                String buttons[] = {"Да", "Нет"};
+                int result = JOptionPane.showOptionDialog(
+                        ClientFrame.this,
+                        "Ты уверен, что хочешь выйти?",
+                        "Подтверждение",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        buttons,
+                        buttons[1]
+                );
+                if (result == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
+        });
         setSize(
                 Toolkit.getDefaultToolkit().getScreenSize().width - 200,
                 Toolkit.getDefaultToolkit().getScreenSize().height - 200
@@ -19,8 +40,9 @@ public class ClientFrame extends JFrame {
     }
 
     private void init() {
-        add(new Field());
-        new ClientHandler().startHandling();
+        Field field = new Field(getWidth(), getHeight());
+        add(field);
+        new ClientHandler(field).startHandling();
     }
 
     public static void main(String[] args) {
