@@ -17,9 +17,13 @@ public class Player {
     public ArrayList<Integer> segmentX = new ArrayList<>();
     public ArrayList<Integer> segmentY = new ArrayList<>();
 
-    public Player(int id, String color){
-        this.id = id;
+    Player(int id, String color){
+        this(id);
         this.color = color;
+    }
+
+    Player(int id) {
+        this.id = id;
         segmentX.add(0);
         segmentY.add(0);
     }
