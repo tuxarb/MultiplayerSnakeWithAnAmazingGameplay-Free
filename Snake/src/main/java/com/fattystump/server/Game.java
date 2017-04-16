@@ -81,28 +81,35 @@ public class Game {
             // other players
             int pX = p.segmentX.get(0);
             int pY = p.segmentY.get(0);
-            for (Player q : players) {
+            for (int j = 0; j < players.size(); j++) {
+                Player q = players.get(j);
                 if (q == null) continue;
 
-                if (p == q) {
-
+                if (p.equals(q)) {
                     for (int d = 1; d < q.segmentX.size(); d++) {
                         if (q.segmentX.get(d) == pX && q.segmentY.get(d) == pY) {
-
                             // dead
                             if (deadPlayersBecomeSolids) playerToSolids(p);
                             players.set(i, null);
                             continue outerLoop;
-                        }
-                    }
-                } else if (p != q && q.segmentX.contains(pX) && q.segmentY.contains(pY)) {
 
-                    // dead
-                    if (deadPlayersBecomeSolids) playerToSolids(p);
+                        }
+
+                    }
+
+                } else if (q.segmentX.indexOf(pX) == 0 && q.segmentY.indexOf(pY) == 0){
+                    players.set(i, null);
+                    players.set(j, null);
+                    continue outerLoop;
+                } else if (q.segmentX.contains(pX) && q.segmentY.contains(pY)) {
+                    for (int t = q.segmentY.size() - 1; t >= q.segmentX.indexOf(pX); t--)
+                        q.segmentY.remove(t);
+                    q.segmentX.removeAll(q.segmentX.subList(q.segmentX.indexOf(pX), q.segmentX.size()));
                     players.set(i, null);
                     continue outerLoop;
                 }
             }
+
         }
     }
 

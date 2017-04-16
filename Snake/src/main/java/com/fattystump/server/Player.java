@@ -9,6 +9,7 @@ public class Player {
     public int score = 0;
     public boolean updateScore = false;
     private boolean freeze = false;
+    public  boolean isFoodEaten = false;
     private int kamikaze = -1;
     private int steps = 1;
     private int step = 0;
@@ -152,9 +153,10 @@ public class Player {
                 break;
         }
         //add segment
-        if (score >= segmentX.size()){
+        if (isFoodEaten){
             segmentX.add(lastX);
             segmentY.add(lastY);
+            isFoodEaten = false;
         }
     }
 }
