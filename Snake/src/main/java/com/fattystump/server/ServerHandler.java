@@ -270,7 +270,7 @@ class ServerHandler implements ActionListener {
                 " ";
         for (int y = 0; y < Game.HEIGHT; y++) {
             for (int x = 0; x < Game.WIDTH; x++)
-                raw += String.valueOf(game.field[x][y]) + "-";
+                raw += String.valueOf(game.field[x][y]) + ":";
             raw = raw.substring(0, raw.length() - 1);
             raw += ";";
         }

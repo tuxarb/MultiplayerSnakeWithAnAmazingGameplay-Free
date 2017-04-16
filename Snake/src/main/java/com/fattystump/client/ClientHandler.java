@@ -63,9 +63,11 @@ class ClientHandler {
                         String[] y = fieldPoints.split(";");
                         int[][] field = new int[sizeX][sizeY];
                         for (int i = 0; i < y.length; i++) {
-                            String[] x = y[i].split("-");
+                            String[] x = y[i].split(":");
                             for (int j = 0; j < x.length; j++) {
-                                field[j][i] = Integer.valueOf(x[j]);
+                                if (!x[j].equals("")) {
+                                    field[j][i] = Integer.valueOf(x[j]);
+                                }
                             }
                         }
                         if (!isAlive) {
@@ -152,7 +154,6 @@ class ClientHandler {
 
     private class KeywordHandler implements KeyListener {
         public void keyPressed(KeyEvent e) {
-            System.out.println(123);
             int key = e.getKeyCode();
             int direction = -1;
             if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
@@ -164,7 +165,6 @@ class ClientHandler {
             } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
                 direction = 3;
             } else if (key == KeyEvent.VK_SPACE && !isAlive) {
-                System.out.println(123);
                 request("getNewId");
             }
             if (direction != -1 && isAlive) {
