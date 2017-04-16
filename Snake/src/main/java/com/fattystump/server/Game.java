@@ -115,6 +115,7 @@ public class Game {
                     fruitsY.set(i, rnd.nextInt(HEIGHT));
                     p.setScore(p.getScore() + 1);
                     p.setUpdateScore(true);
+                    p.isFoodEaten = true;
                 }
             }
         }

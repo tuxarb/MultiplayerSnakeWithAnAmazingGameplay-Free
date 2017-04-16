@@ -5,12 +5,12 @@ import java.util.ArrayList;
 class Player {
     ArrayList<Integer> segmentX = new ArrayList<>();
     ArrayList<Integer> segmentY = new ArrayList<>();
-    private boolean isFoodEaten = false;
+    boolean isFoodEaten = false;
     private int kamikaze = -1;
     private int steps = 1;
     private int step = 0;
     private int id;
-    private int direction = 0;
+    private int direction = -1;
     private int score = 0;
     private boolean updateScore = false;
     private boolean freeze = false;
@@ -46,6 +46,7 @@ class Player {
             segmentY.set(i, segmentY.get(i - 1));
         }
         // move head in direction
+        System.out.println(direction);
         switch (direction) {
             //Right
             case 0:
