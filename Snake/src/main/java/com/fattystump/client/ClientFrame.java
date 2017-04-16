@@ -46,7 +46,7 @@ class ClientFrame extends JFrame {
     private void init() {
         Field field = new Field(getWidth(), getHeight());
         add(field);
-        clientHandler = new ClientHandler(field);
+        clientHandler = new ClientHandler(field, this);
         clientHandler.startHandling();
     }
 

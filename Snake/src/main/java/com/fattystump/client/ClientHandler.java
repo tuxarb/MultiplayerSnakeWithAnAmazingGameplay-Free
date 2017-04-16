@@ -16,14 +16,16 @@ import java.net.InetAddress;
 
 class ClientHandler {
     private Field field;
+    private ClientFrame frame;
     private Client clientKryo;
     private int id;
     private int score;
     private boolean isAlive;
     private KeywordHandler keywordHandler;
 
-    ClientHandler(Field field) {
+    ClientHandler(Field field, ClientFrame frame) {
         this.field = field;
+        this.frame = frame;
         this.keywordHandler = new KeywordHandler();
     }
 
@@ -117,7 +119,7 @@ class ClientHandler {
                     request("getHighscore");
                 }
             });
-            field.addKeyListener(keywordHandler);
+            frame.addKeyListener(keywordHandler);
             request("getHighscore");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
@@ -150,6 +152,7 @@ class ClientHandler {
 
     private class KeywordHandler implements KeyListener {
         public void keyPressed(KeyEvent e) {
+            System.out.println(123);
             int key = e.getKeyCode();
             int direction = -1;
             if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {

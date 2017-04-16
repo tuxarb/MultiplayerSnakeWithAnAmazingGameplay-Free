@@ -41,7 +41,7 @@ class ServerHandler implements ActionListener {
     }
 
     void start() {
-        server = new Server(6000, 6000);
+        server = new Server(8192, 8192);
         server.start();
 
         try {
@@ -87,7 +87,6 @@ class ServerHandler implements ActionListener {
                     }
                 }
             });
-
             game = new Game();
             timer = new Timer(Game.TICK, this);
             timer.start();
