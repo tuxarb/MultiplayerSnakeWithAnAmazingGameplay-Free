@@ -26,6 +26,9 @@ public class ServerHandler implements ActionListener {
     private static final String SPEED_INCORRECT_VALUE_ERROR = "Некорректное значение уровня скорости";
     private static final String SPEED_CHANGED_HINT = "Скорость была изменена";
     private static final String UNKNOWN_COMMAND_ERROR = "Че?";
+    private static final String NEW_PLAYER_JOINED_HINT = "Игрок #%d (игровой клиент  %d) присоединился к игре";
+    private static final String NEW_HIGHSCORE_HINT = "Игрок #%d установил новый рекорд - %d";
+    private static final String PLAYER_DEATH_HINT = "Игрок #%d умирает. Светлая память";
 
     private ServerFrame serverFrame;
     private Server server;
@@ -217,6 +220,32 @@ public class ServerHandler implements ActionListener {
         }
     }
 
+    private void handleRequest(String content, Connection connection) {
+        System.out.println("Request: " + content);
+        if (content.startsWith("getNewId")) {
+            Player newPlayer = new Player(game.getPlayers().size() + 2);
+            game.getPlayers().add(newPlayer);
+            respond("setNewId " + newPlayer.getId(), connection);
+            clients.put(connection.getID(), newPlayer.getId());
+            log(new Formatter()
+                    .format(NEW_PLAYER_JOINED_HINT, newPlayer.getId(), connection.getID())
+                    .toString());
+        } else if (content.startsWith("direction")) {
+            String args[] = content.substring(content.indexOf(" ") + 1).split(" ");
+            int playerId = Integer.valueOf(args[0]);
+            Player player = getPlayerById(playerId);
+            if (player == null) {
+                log(new Formatter()
+                        .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                        .toString());
+                return;
+            }
+            player.setDirection(Integer.valueOf(args[1]));
+        } else if (content.startsWith("getHighscore")) {
+            respond("getHighscore " + game.getHighScore(), connection);
+        }
+    }
+
     private Player getPlayerById(int playerId) {
         Player player;
         try {
@@ -227,10 +256,6 @@ public class ServerHandler implements ActionListener {
         return player;
     }
 
-    private void handleRequest(String content, Connection connection) {
-
-    }
-
     private void respond(String content, Connection connection) {
         Response response = new Response();
         response.setContent(content);
@@ -239,6 +264,52 @@ public class ServerHandler implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        game.update();
 
+        String raw = "update " +
+                Game.WIDTH +
+                " " +
+                Game.HEIGHT +
+                " ";
+        for (int y = 0; y < Game.HEIGHT; y++) {
+            for (int x = 0; x < Game.WIDTH; x++)
+                raw += String.valueOf(game.field[x][y]) + "-";
+            raw = raw.substring(0, raw.length() - 1);
+            raw += ";";
+        }
+        raw = raw.substring(0, raw.length() - 1);
+
+        Response response = new Response();
+        response.setContent(raw);
+        server.sendToAllTCP(response);
+
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            Player player = game.getPlayers().get(i);
+            if (player != null && player.isUpdateScore()) {
+                response = new Response();
+                response.setContent("score " + player.getId() + " " + player.getScore());
+                server.sendToAllTCP(response);
+                player.setUpdateScore(false);
+
+                if (player.getScore() > game.getHighScore()) {
+                    game.setHighScore(player.getScore());
+                    response = new Response();
+                    response.setContent("highscore " + game.getHighScore());
+                    server.sendToAllTCP(response);
+                    log(new Formatter()
+                            .format(NEW_HIGHSCORE_HINT, player.getId(), game.getHighScore())
+                            .toString());
+                }
+            } else if (player == null && !deadIds.contains(i + 2)) {
+                deadIds.add(i + 2);
+                response = new Response();
+                response.setContent("dead " + (i + 2));
+                server.sendToAllTCP(response);
+                log(new Formatter()
+                        .format(PLAYER_DEATH_HINT, (i + 2))
+                        .toString());
+            }
+
+        }
     }
 }
