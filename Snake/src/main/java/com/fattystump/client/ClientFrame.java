@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 
 class ClientFrame extends JFrame {
     private ClientHandler clientHandler;
@@ -34,6 +35,11 @@ class ClientFrame extends JFrame {
             }
         });
         setResizable(false);
+        URL iconURL = getClass().getResource("/images/icon.jpg");
+        if (iconURL != null) {
+            ImageIcon icon = new ImageIcon(iconURL);
+            setIconImage(icon.getImage());
+        }
         setVisible(true);
         init();
     }

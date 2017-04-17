@@ -10,8 +10,8 @@ class Player {
     private int steps = 1;
     private int step = 0;
     private int id;
-    private int direction = -1;
-    private int score = 0;
+    private int direction;
+    private int score;
     private boolean updateScore = false;
     private boolean freeze = false;
 
@@ -46,7 +46,6 @@ class Player {
             segmentY.set(i, segmentY.get(i - 1));
         }
         // move head in direction
-        System.out.println(direction);
         switch (direction) {
             //Right
             case 0:
