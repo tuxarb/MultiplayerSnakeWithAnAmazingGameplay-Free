@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
 
 class Field extends JPanel {
     private String info;
@@ -19,18 +18,21 @@ class Field extends JPanel {
     private static final int WIDTH = Game.WIDTH;
     private static final int HEIGHT = Game.HEIGHT;
     private final static int SEGMENT_SIZE = 20;
-    private BufferedImage backgroundImage = null;
-    private BufferedImage solidImage = null;
-    private BufferedImage foodImage = null;
+    private static BufferedImage backgroundImage = null;
+    private static BufferedImage solidImage = null;
+    private static BufferedImage foodImage = null;
     static String SCORE_INFO = "Ваши очки=%d\nРекорд=%d";
 
-    Field() {
+    static {
         try {
-            backgroundImage = ImageIO.read(this.getClass().getResourceAsStream("/images/background.jpg"));
-            solidImage = ImageIO.read(this.getClass().getResourceAsStream("/images/solid.jpg"));
-            foodImage = ImageIO.read(this.getClass().getResourceAsStream("/images/food.jpg"));
+            backgroundImage = ImageIO.read(Field.class.getResourceAsStream("/images/background.jpg"));
+            solidImage = ImageIO.read(Field.class.getResourceAsStream("/images/solid.jpg"));
+            foodImage = ImageIO.read(Field.class.getResourceAsStream("/images/food.jpg"));
         } catch (IOException ignored) {
         }
+    }
+
+    Field() {
         setPreferredSize(new Dimension(WIDTH * SEGMENT_SIZE, HEIGHT * SEGMENT_SIZE));
         CURRENT_SNAKE_COLOR = Color.RED;
     }
@@ -64,7 +66,7 @@ class Field extends JPanel {
                     } else if (field[x][y] > 1) {           // туловища других змеек
                         g.setColor(Color.BLACK.darker());
                     } else if (field[x][y] < -1) {          // головы других
-                        g.setColor(Color.BLACK.brighter());
+                        g.setColor(new Color(10, 40, 10));
                     } else {
                         if (backgroundImage != null) {
                             g.drawImage(backgroundImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
@@ -77,8 +79,8 @@ class Field extends JPanel {
                 }
             }
         }
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Verdana", 2, 18));
+        g.setColor(new Color(255, 185, 200));
+        g.setFont(new Font("Century Gothic", 4, 22));
         g.drawString(info.substring(0, info.indexOf("\n")), getWidth() / 2 - 100, getHeight() - 25);
         g.drawString(info.substring(info.indexOf("\n") + 1, info.length()), getWidth() / 2 - 100, getHeight() - 5);
     }
