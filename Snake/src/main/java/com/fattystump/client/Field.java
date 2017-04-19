@@ -19,14 +19,14 @@ class Field extends JPanel {
     private static final int HEIGHT = Game.HEIGHT;
     private final static int SEGMENT_SIZE = 20;
     private static BufferedImage backgroundImage = null;
-    private static BufferedImage solidImage = null;
+    private static BufferedImage stoneImage = null;
     private static BufferedImage foodImage = null;
     static String SCORE_INFO = "Ваши очки=%d\nРекорд=%d";
 
     static {
         try {
             backgroundImage = ImageIO.read(Field.class.getResourceAsStream("/images/background.jpg"));
-            solidImage = ImageIO.read(Field.class.getResourceAsStream("/images/solid.jpg"));
+            stoneImage = ImageIO.read(Field.class.getResourceAsStream("/images/stone.jpg"));
             foodImage = ImageIO.read(Field.class.getResourceAsStream("/images/food.jpg"));
         } catch (IOException ignored) {
         }
@@ -56,14 +56,14 @@ class Field extends JPanel {
                             continue;
                         }
                     } else if (field[x][y] == -1) {
-                        if (solidImage == null) {
+                        if (stoneImage == null) {
                             g.setColor(Color.GRAY);
                         } else {
                             if (!isTheNextObjectDrawn) {
                                 isTheNextObjectDrawn = true;
                                 continue;
                             }
-                            g.drawImage(solidImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            g.drawImage(stoneImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
                             isTheNextObjectDrawn = false;
                             continue;
                         }
