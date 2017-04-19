@@ -30,7 +30,7 @@ class ClientHandler {
     }
 
     void startHandling() {
-        clientKryo = new Client(6000, 6000);
+        clientKryo = new Client(12000, 12000);
         clientKryo.start();
         field.setInfo(String.format(Field.SCORE_INFO, score, field.getHighscore()));
         try {
@@ -38,6 +38,10 @@ class ClientHandler {
             kryo.register(Request.class);
             kryo.register(Response.class);
             String serverIP = JOptionPane.showInputDialog("Укажите IP сервера");
+            if (serverIP == null) {
+                JOptionPane.showMessageDialog(null, "Сервер не выбран.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            }
             InetAddress serverAddress = InetAddress.getByName(serverIP);
             clientKryo.connect(2000, serverAddress, 50000, 50001);
             clientKryo.addListener(new Listener() {
