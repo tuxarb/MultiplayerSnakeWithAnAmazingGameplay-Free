@@ -1,10 +1,11 @@
 package com.fattystump.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class Player {
-    ArrayList<Integer> segmentX = new ArrayList<>();
-    ArrayList<Integer> segmentY = new ArrayList<>();
+    List<Integer> segmentX = new ArrayList<>();
+    List<Integer> segmentY = new ArrayList<>();
     boolean isFoodEaten = false;
     private int kamikaze = -1;
     private int steps = 1;
@@ -132,15 +133,15 @@ class Player {
         this.step = step;
     }
 
-    public ArrayList<Integer> getSegmentX() {
+    public List<Integer> getSegmentX() {
         return segmentX;
     }
 
-    public void setSegmentX(ArrayList<Integer> segmentX) {
+    public void setSegmentX(List<Integer> segmentX) {
         this.segmentX = segmentX;
     }
 
-    public ArrayList<Integer> getSegmentY() {
+    public List<Integer> getSegmentY() {
         return segmentY;
     }
 }

@@ -45,11 +45,11 @@ class ClientFrame extends JFrame {
     }
 
     private void init() {
-        JPanel contentPane = new JPanel();
-        contentPane.setLayout(new BorderLayout(0, 0));
-        setContentPane(contentPane);
+        JPanel content = new JPanel();
+        content.setLayout(new BorderLayout(0, 0));
+        setContentPane(content);
         Field field = new Field();
-        contentPane.add(field);
+        content.add(field);
         pack();
         setLocationRelativeTo(null);
         clientHandler = new ClientHandler(field, this);

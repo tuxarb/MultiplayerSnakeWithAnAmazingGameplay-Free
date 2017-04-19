@@ -8,13 +8,11 @@ import com.fattystump.Request;
 import com.fattystump.Response;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.HashMap;
+import java.util.*;
 
 class ServerHandler implements ActionListener {
     private static final String PLAYER_NOT_FOUND_ERROR = "Игрок #%d не найден";
@@ -31,9 +29,9 @@ class ServerHandler implements ActionListener {
     private ServerFrame serverFrame;
     private Server server;
     private Game game;
-    private ArrayList<Integer> deadIds = new ArrayList<>();
-    private HashMap<Integer, Integer> clients = new HashMap<>();
-    private ArrayList<String> banList = new ArrayList<>();
+    private List<Integer> deadIds = new ArrayList<>();
+    private Map<Integer, Integer> clients = new HashMap<>();
+    private List<String> banList = new ArrayList<>();
     private Timer timer;
 
     ServerHandler(ServerFrame serverFrame) {

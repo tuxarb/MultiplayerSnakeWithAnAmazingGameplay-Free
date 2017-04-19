@@ -51,18 +51,16 @@ class Field extends JPanel {
                             g.setColor(Color.GREEN);
                         }
                     } else if (field[x][y] == -1) {
-                        g.setColor(Color.GRAY);
-                    } else if (field[x][y] == clientId && clientId != 0) {   // туловище
-                        g.setColor(CURRENT_SNAKE_COLOR.darker());
-                    } else if ((field[x][y] == -clientId || field[x][y] == -Integer.MAX_VALUE) && clientId != 0) {  // голова
-                        g.setColor(CURRENT_SNAKE_COLOR.brighter());
-                    } else if (field[x][y] == Integer.MAX_VALUE) {
                         if (solidImage != null) {
                             g.drawImage(solidImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
                             continue;
                         } else {
                             g.setColor(Color.GRAY);
                         }
+                    } else if (field[x][y] == clientId && clientId != 0) {   // туловище
+                        g.setColor(CURRENT_SNAKE_COLOR.darker());
+                    } else if ((field[x][y] == -clientId || field[x][y] == -Integer.MAX_VALUE) && clientId != 0) {  // голова
+                        g.setColor(CURRENT_SNAKE_COLOR.brighter());
                     } else if (field[x][y] > 1) {           // туловища других змеек
                         g.setColor(Color.BLACK.darker());
                     } else if (field[x][y] < -1) {          // головы других

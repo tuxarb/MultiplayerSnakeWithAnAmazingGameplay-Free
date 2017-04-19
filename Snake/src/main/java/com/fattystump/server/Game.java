@@ -2,41 +2,47 @@ package com.fattystump.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class Game {
-    public static final int HEIGHT = 30;
     public static final int WIDTH = 64;
+    public static final int HEIGHT = 30;
     static final int TICK = 100;
-    private static final int FRUITS = 3;
-    private static final int STONES = 3;
+    private static final int FRUITS = 6;
+    private static final int STONES = 4;
     int field[][] = new int[WIDTH][HEIGHT];
-    private ArrayList<Player> players = new ArrayList<>();
     private Random rnd = new Random();
-    private ArrayList<Integer> fruitsX = new ArrayList<>();
-    private ArrayList<Integer> fruitsY = new ArrayList<>();
-    private ArrayList<Integer> solidsX = new ArrayList<>();
-    private ArrayList<Integer> solidsY = new ArrayList<>();
-    private ArrayList<Integer> stoneX = new ArrayList<>();
-    private ArrayList<Integer> stoneY = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
+    private List<Integer> fruitsX = new ArrayList<>();
+    private List<Integer> fruitsY = new ArrayList<>();
+    private List<Integer> stonesX = new ArrayList<>();
+    private List<Integer> stonesY = new ArrayList<>();
     private int highScore;
-    private boolean deadPlayersBecomeSolids;
 
     Game() {
         for (int i = 0; i < FRUITS; i++) {
-            fruitsX.add(rnd.nextInt(WIDTH));
-            fruitsY.add(rnd.nextInt(HEIGHT));
+            fruitsX.add(getRandom(WIDTH));
+            fruitsY.add(getRandom(HEIGHT));
         }
         for (int i = 0; i < STONES; i++) {
-            stoneX.add(rnd.nextInt(WIDTH));
-            stoneY.add(rnd.nextInt(HEIGHT));
+            stonesX.add(getRandom(WIDTH));
+            stonesY.add(getRandom(HEIGHT));
         }
+    }
+
+    private int getRandom(int upperBound) {
+        int rand = rnd.nextInt(upperBound - 1);
+        if (rand == 0) {
+            rand = 1;
+        }
+        return rand;
     }
 
     void update() {
         move();
         checkCollisions();
-        checkSolids();
+        checkStones();
         checkFruits();
         updateField();
     }
@@ -59,7 +65,6 @@ public class Game {
                     Collections.min(p.segmentX) < 0 ||
                     Collections.min(p.segmentY) < 0) {
                 // dead
-                if (deadPlayersBecomeSolids) playerToSolids(p);
                 players.set(i, null);
                 continue;
             }
@@ -73,7 +78,6 @@ public class Game {
                     for (int d = 1; d < q.segmentX.size(); d++) {
                         if (q.segmentX.get(d) == pX && q.segmentY.get(d) == pY) {
                             // dead
-                            if (deadPlayersBecomeSolids) playerToSolids(p);
                             players.set(i, null);
                             continue outerLoop;
                         }
@@ -93,26 +97,16 @@ public class Game {
         }
     }
 
-    private void checkSolids() {
-        for (Player p : players) {
-            if (p == null) continue;
-            for (int i = 0; i < STONES; i++) {
-                if (p.segmentX.get(0) == stoneX.get(i) && p.segmentY.get(0) == stoneY.get(i)) {
-                    stoneX.set(i, rnd.nextInt(WIDTH));
-                    stoneY.set(i, rnd.nextInt(HEIGHT));
-                    players.set(players.indexOf(p), null);
-                }
-            }
-        }
-    }
-
     private void checkFruits() {
         for (Player p : players) {
             if (p == null) continue;
             for (int i = 0; i < FRUITS; i++) {
-                if (p.segmentX.get(0) == fruitsX.get(i) && p.segmentY.get(0) == fruitsY.get(i)) {
-                    fruitsX.set(i, rnd.nextInt(WIDTH));
-                    fruitsY.set(i, rnd.nextInt(HEIGHT));
+                int fruitX = fruitsX.get(i);
+                int fruitY = fruitsY.get(i);
+                if ((p.segmentX.get(0).equals(fruitX) && p.segmentY.get(0).equals(fruitY)) ||
+                        (p.segmentX.get(0).equals(fruitX + 1) && p.segmentY.get(0).equals(fruitY))) {
+                    fruitsX.set(i, getRandom(WIDTH));
+                    fruitsY.set(i, getRandom(HEIGHT));
                     p.setScore(p.getScore() + 1);
                     p.setUpdateScore(true);
                     p.isFoodEaten = true;
@@ -121,27 +115,35 @@ public class Game {
         }
     }
 
+    private void checkStones() {
+        for (Player p : players) {
+            if (p == null) continue;
+            for (int i = 0; i < STONES; i++) {
+                int stoneX = stonesX.get(i);
+                int stoneY = stonesY.get(i);
+                if ((p.segmentX.get(0).equals(stoneX) && p.segmentY.get(0).equals(stoneY)) ||
+                        (p.segmentX.get(0).equals(stoneX + 1) && p.segmentY.get(0).equals(stoneY))) {
+                    stonesX.set(i, getRandom(WIDTH));
+                    stonesY.set(i, getRandom(HEIGHT));
+                    players.set(players.indexOf(p), null);
+                }
+            }
+        }
+    }
+
     private void updateField() {
         field = new int[WIDTH][HEIGHT];
-        // solids
-        for (int i = 0; i < solidsX.size(); i++) {
-            // safezone
-            if (solidsX.get(i) < 3 && solidsY.get(i) < 3) {
-                solidsX.remove(i);
-                solidsY.remove(i);
-                continue;
-            }
-            field[solidsX.get(i)][solidsY.get(i)] = -1;
-        }
 
         // fruits
         for (int i = 0; i < FRUITS; i++) {
             field[fruitsX.get(i)][fruitsY.get(i)] = 1;
+            field[fruitsX.get(i) + 1][fruitsY.get(i)] = 1;
         }
 
         // Stones
         for (int i = 0; i < STONES; i++) {
-            field[stoneX.get(i)][stoneY.get(i)] = Integer.MAX_VALUE;
+            field[stonesX.get(i)][stonesY.get(i)] = -1;
+            field[stonesX.get(i) + 1][stonesY.get(i)] = -1;
         }
         // players
         for (Player p : players) {
@@ -155,17 +157,6 @@ public class Game {
         }
     }
 
-    private void playerToSolids(Player p) {
-        for (int i = 0; i < p.segmentX.size(); i++) {
-            int x = p.segmentX.get(i);
-            int y = p.segmentY.get(i);
-            if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                solidsX.add(x);
-                solidsY.add(y);
-            }
-        }
-    }
-
     int getHighScore() {
         return highScore;
     }
@@ -174,7 +165,7 @@ public class Game {
         this.highScore = highScore;
     }
 
-    ArrayList<Player> getPlayers() {
+    List<Player> getPlayers() {
         return players;
     }
 }
