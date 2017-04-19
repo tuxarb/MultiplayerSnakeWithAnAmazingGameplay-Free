@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.Server;
 import com.fattystump.Request;
 import com.fattystump.Response;
 
-import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +53,7 @@ class ServerHandler implements ActionListener {
                 @Override
                 public void received(Connection connection, Object object) {
                     if (object instanceof Request) {
-                        Request request = (Request)object;
+                        Request request = (Request) object;
                         handleRequest(request.getContent(), connection);
                     }
                 }
@@ -280,21 +279,22 @@ class ServerHandler implements ActionListener {
 
         for (int i = 0; i < game.getPlayers().size(); i++) {
             Player player = game.getPlayers().get(i);
-            if (player != null && player.isUpdateScore()) {
-                response = new Response();
-                response.setContent("score " + player.getId() + " " + player.getScore());
-                server.sendToAllTCP(response);
-                player.setUpdateScore(false);
-
+            if (player != null) {
+                if (player.isUpdateScore()) {
+                    response = new Response();
+                    response.setContent("score " + player.getId() + " " + player.getScore());
+                    server.sendToAllTCP(response);
+                    player.setUpdateScore(false);
+                }
                 if (player.getScore() > game.getHighScore()) {
                     game.setHighScore(player.getScore());
-                    response = new Response();
-                    response.setContent("highscore " + game.getHighScore());
-                    server.sendToAllTCP(response);
                     log(new Formatter()
                             .format(NEW_HIGHSCORE_HINT, player.getId(), game.getHighScore())
                             .toString());
                 }
+                response = new Response();
+                response.setContent("highscore " + game.getHighScore());
+                server.sendToAllTCP(response);
             } else if (player == null && !deadIds.contains(i + 2)) {
                 deadIds.add(i + 2);
                 response = new Response();

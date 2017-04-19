@@ -39,23 +39,33 @@ class Field extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         if (field != null) {
-            for (int x = 0; x < WIDTH; x++) {
-                for (int y = 0; y < HEIGHT; y++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                boolean isTheNextObjectDrawn = true;
+                for (int x = 0; x < WIDTH; x++) {
                     if (field[x][y] == 1) {
-                        if (foodImage != null) {
-                            g.drawImage(foodImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
-                            continue;
-                        } else {
+                        if (foodImage == null) {
                             g.setColor(Color.GREEN);
+                        } else {
+                            if (!isTheNextObjectDrawn) {
+                                isTheNextObjectDrawn = true;
+                                continue;
+                            }
+                            g.drawImage(foodImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            isTheNextObjectDrawn = false;
+                            continue;
                         }
                     } else if (field[x][y] == -1) {
-                        if (solidImage != null) {
-                            g.drawImage(solidImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
-                            continue;
-                        } else {
+                        if (solidImage == null) {
                             g.setColor(Color.GRAY);
+                        } else {
+                            if (!isTheNextObjectDrawn) {
+                                isTheNextObjectDrawn = true;
+                                continue;
+                            }
+                            g.drawImage(solidImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            isTheNextObjectDrawn = false;
+                            continue;
                         }
                     } else if (field[x][y] == clientId && clientId != 0) {   // туловище
                         g.setColor(CURRENT_SNAKE_COLOR.darker());
