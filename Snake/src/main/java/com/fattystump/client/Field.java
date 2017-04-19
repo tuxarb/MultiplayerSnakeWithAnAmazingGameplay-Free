@@ -54,7 +54,7 @@ class Field extends JPanel {
                         g.setColor(Color.GRAY);
                     } else if (field[x][y] == clientId && clientId != 0) {   // туловище
                         g.setColor(CURRENT_SNAKE_COLOR.darker());
-                    } else if (field[x][y] == -clientId && clientId != 0) {  // голова
+                    } else if ((field[x][y] == -clientId || field[x][y] == -Integer.MAX_VALUE) && clientId != 0) {  // голова
                         g.setColor(CURRENT_SNAKE_COLOR.brighter());
                     } else if (field[x][y] == Integer.MAX_VALUE) {
                         if (solidImage != null) {

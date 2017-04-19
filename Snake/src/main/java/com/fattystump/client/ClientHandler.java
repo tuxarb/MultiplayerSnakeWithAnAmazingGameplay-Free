@@ -73,7 +73,7 @@ class ClientHandler {
                             }
                         }
                         if (!isAlive) {
-                            field[0][0] = -id;
+                            field[0][0] = -Integer.MAX_VALUE;
                         }
                         ClientHandler.this.field.setField(field);
                         ClientHandler.this.field.repaint();
@@ -126,12 +126,6 @@ class ClientHandler {
             frame.addKeyListener(keywordHandler);
             request("getHighscore");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    field,
-                    e.toString(),
-                    "Ошибка!",
-                    JOptionPane.ERROR_MESSAGE
-            );
             int result = JOptionPane.showOptionDialog(null, "Сервер не найден.", "Ошибка",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     new String[]{"Повторить", "Завершить"}, "Повторить");

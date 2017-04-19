@@ -41,7 +41,7 @@ class ServerHandler implements ActionListener {
     }
 
     void start() {
-        server = new Server(8192, 8192);
+        server = new Server(15000, 15000);
         server.start();
 
         try {
