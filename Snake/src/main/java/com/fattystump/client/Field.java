@@ -18,6 +18,9 @@ class Field extends JPanel {
     private static final int WIDTH = Game.WIDTH;
     private static final int HEIGHT = Game.HEIGHT;
     private final static int SEGMENT_SIZE = 20;
+    private int rivalHeadPrevPositionX;
+    private int rivalHeadPrevPositionY;
+    private Image rivalPrevHeadImage = rivalSnakeHeadRightImage;
     private static BufferedImage backgroundImage = null;
     private static BufferedImage stoneImage = null;
     private static BufferedImage foodImage = null;
@@ -96,7 +99,7 @@ class Field extends JPanel {
                             g.drawImage(snakeBodyImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
                             continue;
                         }
-                    } else if (field[x][y] == -clientId && clientId != 0) { // голова
+                    } else if (field[x][y] == -clientId && clientId != 0 || clientId == 0 && field[x][y] == -Integer.MAX_VALUE) { // голова
                         if (snakeHeadRightImage == null) {
                             g.setColor(CURRENT_SNAKE_COLOR.brighter());
                         } else {
@@ -104,7 +107,7 @@ class Field extends JPanel {
                                 isTheNextObjectDrawn = true;
                                 continue;
                             }
-                            Image image = getImageDependingOnDirection(false);
+                            Image image = getImageDependingOnDirection();
                             int headX = x * SEGMENT_SIZE;
                             if (direction == 1 || direction == 3) {
                                 headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
@@ -120,7 +123,7 @@ class Field extends JPanel {
                             g.drawImage(rivalSnakeBodyImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
                             continue;
                         }
-                    } else if (field[x][y] < -1) {          // головы других змеек
+                    } else if (field[x][y] < -1 && field[x][y] != -Integer.MAX_VALUE) {          // головы других змеек
                         if (rivalSnakeHeadRightImage == null) {
                             g.setColor(new Color(10, 40, 10));
                         } else {
@@ -128,13 +131,26 @@ class Field extends JPanel {
                                 isTheNextObjectDrawn = true;
                                 continue;
                             }
-                            Image image = getImageDependingOnDirection(true);
                             int headX = x * SEGMENT_SIZE;
-                            if (direction == 1 || direction == 3) {
+                            Image image;
+                            if (x + 1 == rivalHeadPrevPositionX && y == rivalHeadPrevPositionY) {
+                                image = rivalSnakeHeadLeftImage;
+                            } else if (x == rivalHeadPrevPositionX && y + 1 == rivalHeadPrevPositionY) {
+                                image = rivalSnakeHeadUpImage;
                                 headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
+                            } else if (x == rivalHeadPrevPositionX && y - 1 == rivalHeadPrevPositionY) {
+                                image = rivalSnakeHeadDownImage;
+                                headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
+                            } else if (x - 1 == rivalHeadPrevPositionX && y == rivalHeadPrevPositionY) {
+                                image = rivalSnakeHeadRightImage;
+                            } else {
+                                image = rivalPrevHeadImage;
                             }
                             g.drawImage(image, headX, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
                             isTheNextObjectDrawn = false;
+                            rivalHeadPrevPositionX = x;
+                            rivalHeadPrevPositionY = y;
+                            rivalPrevHeadImage = image;
                             continue;
                         }
                     } else {
@@ -150,20 +166,20 @@ class Field extends JPanel {
         g.drawString(info.substring(info.indexOf("\n") + 1, info.length()), getWidth() / 2 - 100, getHeight() - 5);
     }
 
-    private Image getImageDependingOnDirection(boolean isRival) {
+    private Image getImageDependingOnDirection() {
         Image image;
         switch (direction) {
             case 1:
-                image = isRival ? rivalSnakeHeadUpImage : snakeHeadUpImage;
+                image = snakeHeadUpImage;
                 break;
             case 2:
-                image = isRival ? rivalSnakeHeadLeftImage : snakeHeadLeftImage;
+                image = snakeHeadLeftImage;
                 break;
             case 3:
-                image = isRival ? rivalSnakeHeadDownImage : snakeHeadDownImage;
+                image = snakeHeadDownImage;
                 break;
             default:
-                image = isRival ? rivalSnakeHeadRightImage : snakeHeadRightImage;
+                image = snakeHeadRightImage;
                 break;
         }
         return image;
