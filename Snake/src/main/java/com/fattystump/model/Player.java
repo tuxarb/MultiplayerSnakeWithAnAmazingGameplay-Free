@@ -1,22 +1,20 @@
-package com.fattystump.server;
+package com.fattystump.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class Player {
+public class Player {
     List<Integer> segmentX = new ArrayList<>();
     List<Integer> segmentY = new ArrayList<>();
     boolean isFoodEaten = false;
     private int kamikaze = -1;
-    private int steps = 1;
-    private int step = 0;
     private int id;
     private int direction;
     private int score;
     private boolean updateScore = false;
     private boolean freeze = false;
 
-    Player(int id) {
+    public Player(int id) {
         this.id = id;
         segmentX.add(0);
         segmentY.add(0);
@@ -25,12 +23,6 @@ class Player {
     void move() {
         //server commands
         if (freeze) {
-            return;
-        }
-        step++;
-        if (step >= steps) {
-            step = 0;
-        } else {
             return;
         }
         if (kamikaze > -1) {
@@ -73,75 +65,43 @@ class Player {
         }
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    int getDirection() {
+    public int getDirection() {
         return direction;
     }
 
-    void setDirection(int direction) {
+    public void setDirection(int direction) {
         this.direction = direction;
     }
 
-    int getScore() {
+    public int getScore() {
         return score;
     }
 
-    void setScore(int score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
-    boolean isUpdateScore() {
+    public boolean isUpdateScore() {
         return updateScore;
     }
 
-    void setUpdateScore(boolean updateScore) {
+    public void setUpdateScore(boolean updateScore) {
         this.updateScore = updateScore;
     }
 
-    boolean isFreeze() {
+    public boolean isFreeze() {
         return freeze;
     }
 
-    void setFreeze(boolean freeze) {
+    public void setFreeze(boolean freeze) {
         this.freeze = freeze;
     }
 
-    int getKamikaze() {
-        return kamikaze;
-    }
-
-    void setKamikaze(int kamikaze) {
+    public void setKamikaze(int kamikaze) {
         this.kamikaze = kamikaze;
-    }
-
-    public int getSteps() {
-        return steps;
-    }
-
-    public void setSteps(int steps) {
-        this.steps = steps;
-    }
-
-    public int getStep() {
-        return step;
-    }
-
-    public void setStep(int step) {
-        this.step = step;
-    }
-
-    public List<Integer> getSegmentX() {
-        return segmentX;
-    }
-
-    public void setSegmentX(List<Integer> segmentX) {
-        this.segmentX = segmentX;
-    }
-
-    public List<Integer> getSegmentY() {
-        return segmentY;
     }
 }

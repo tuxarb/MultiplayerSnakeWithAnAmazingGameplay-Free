@@ -1,7 +1,7 @@
 package com.fattystump.client;
 
 
-import com.fattystump.server.Game;
+import com.fattystump.model.Game;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

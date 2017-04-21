@@ -6,6 +6,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.fattystump.Request;
 import com.fattystump.Response;
+import com.fattystump.model.Game;
+import com.fattystump.model.Player;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -206,7 +208,7 @@ class ServerHandler implements ActionListener {
                     log(SPEED_INCORRECT_VALUE_ERROR);
                     return;
                 }
-                timer.setDelay((10 - (-speedLevel)) * 10);
+                timer.setDelay((10 - speedLevel) * 10);
                 log(SPEED_CHANGED_HINT);
                 break;
             default:
