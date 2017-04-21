@@ -7,13 +7,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 class Field extends JPanel {
     private String info;
     private int[][] field;
     private int highscore;
     private int clientId;
+    private int direction;
     private final Color CURRENT_SNAKE_COLOR;
     private static final int WIDTH = Game.WIDTH;
     private static final int HEIGHT = Game.HEIGHT;
@@ -21,14 +21,34 @@ class Field extends JPanel {
     private static BufferedImage backgroundImage = null;
     private static BufferedImage stoneImage = null;
     private static BufferedImage foodImage = null;
+    private static BufferedImage snakeHeadLeftImage = null;
+    private static BufferedImage snakeHeadRightImage = null;
+    private static BufferedImage snakeHeadDownImage = null;
+    private static BufferedImage snakeHeadUpImage = null;
+    private static BufferedImage snakeBodyImage = null;
+    private static BufferedImage rivalSnakeHeadLeftImage = null;
+    private static BufferedImage rivalSnakeHeadRightImage = null;
+    private static BufferedImage rivalSnakeHeadDownImage = null;
+    private static BufferedImage rivalSnakeHeadUpImage = null;
+    private static BufferedImage rivalSnakeBodyImage = null;
     static String SCORE_INFO = "Ваши очки=%d\nРекорд=%d";
 
     static {
         try {
             backgroundImage = ImageIO.read(Field.class.getResourceAsStream("/images/background.jpg"));
             stoneImage = ImageIO.read(Field.class.getResourceAsStream("/images/stone.jpg"));
-            foodImage = ImageIO.read(Field.class.getResourceAsStream("/images/food.jpg"));
-        } catch (IOException ignored) {
+            foodImage = ImageIO.read(Field.class.getResourceAsStream("/images/food.png"));
+            snakeHeadLeftImage = ImageIO.read(Field.class.getResourceAsStream("/images/snake_head_left.png"));
+            snakeHeadRightImage = ImageIO.read(Field.class.getResourceAsStream("/images/snake_head_right.png"));
+            snakeHeadUpImage = ImageIO.read(Field.class.getResourceAsStream("/images/snake_head_up.png"));
+            snakeHeadDownImage = ImageIO.read(Field.class.getResourceAsStream("/images/snake_head_down.png"));
+            rivalSnakeHeadLeftImage = ImageIO.read(Field.class.getResourceAsStream("/images/rival_snake_head_left.png"));
+            rivalSnakeHeadRightImage = ImageIO.read(Field.class.getResourceAsStream("/images/rival_snake_head_right.png"));
+            rivalSnakeHeadUpImage = ImageIO.read(Field.class.getResourceAsStream("/images/rival_snake_head_up.png"));
+            rivalSnakeHeadDownImage = ImageIO.read(Field.class.getResourceAsStream("/images/rival_snake_head_down.png"));
+            snakeBodyImage = ImageIO.read(Field.class.getResourceAsStream("/images/snake_body.png"));
+            rivalSnakeBodyImage = ImageIO.read(Field.class.getResourceAsStream("/images/rival_snake_body.png"));
+        } catch (Exception ignored) {
         }
     }
 
@@ -39,6 +59,8 @@ class Field extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.drawImage(backgroundImage, 0, 0, WIDTH * SEGMENT_SIZE, HEIGHT * SEGMENT_SIZE, this);
         if (field != null) {
             for (int y = 0; y < HEIGHT; y++) {
                 boolean isTheNextObjectDrawn = true;
@@ -68,29 +90,83 @@ class Field extends JPanel {
                             continue;
                         }
                     } else if (field[x][y] == clientId && clientId != 0) {   // туловище
-                        g.setColor(CURRENT_SNAKE_COLOR.darker());
-                    } else if ((field[x][y] == -clientId || field[x][y] == -Integer.MAX_VALUE) && clientId != 0) {  // голова
-                        g.setColor(CURRENT_SNAKE_COLOR.brighter());
-                    } else if (field[x][y] > 1) {           // туловища других змеек
-                        g.setColor(Color.BLACK.darker());
-                    } else if (field[x][y] < -1) {          // головы других
-                        g.setColor(new Color(10, 40, 10));
-                    } else {
-                        if (backgroundImage != null) {
-                            g.drawImage(backgroundImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
-                            continue;
+                        if (snakeBodyImage == null) {
+                            g.setColor(CURRENT_SNAKE_COLOR.darker());
                         } else {
-                            g.setColor(Color.WHITE);
+                            g.drawImage(snakeBodyImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            continue;
                         }
+                    } else if (field[x][y] == -clientId && clientId != 0) { // голова
+                        if (snakeHeadRightImage == null) {
+                            g.setColor(CURRENT_SNAKE_COLOR.brighter());
+                        } else {
+                            if (!isTheNextObjectDrawn) {
+                                isTheNextObjectDrawn = true;
+                                continue;
+                            }
+                            Image image = getImageDependingOnDirection(false);
+                            int headX = x * SEGMENT_SIZE;
+                            if (direction == 1 || direction == 3) {
+                                headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
+                            }
+                            g.drawImage(image, headX, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            isTheNextObjectDrawn = false;
+                            continue;
+                        }
+                    } else if (field[x][y] > 1) {           // туловища других змеек
+                        if (rivalSnakeHeadLeftImage == null) {
+                            g.setColor(Color.BLACK.darker());
+                        } else {
+                            g.drawImage(rivalSnakeBodyImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            continue;
+                        }
+                    } else if (field[x][y] < -1) {          // головы других змеек
+                        if (rivalSnakeHeadRightImage == null) {
+                            g.setColor(new Color(10, 40, 10));
+                        } else {
+                            if (!isTheNextObjectDrawn) {
+                                isTheNextObjectDrawn = true;
+                                continue;
+                            }
+                            Image image = getImageDependingOnDirection(true);
+                            int headX = x * SEGMENT_SIZE;
+                            if (direction == 1 || direction == 3) {
+                                headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
+                            }
+                            g.drawImage(image, headX, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
+                            isTheNextObjectDrawn = false;
+                            continue;
+                        }
+                    } else {
+                        continue;
                     }
                     g.fillRect(x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE);
                 }
             }
         }
-        g.setColor(new Color(255, 185, 200));
+        g.setColor(new Color(0, 0, 0));
         g.setFont(new Font("Century Gothic", 4, 22));
         g.drawString(info.substring(0, info.indexOf("\n")), getWidth() / 2 - 100, getHeight() - 25);
         g.drawString(info.substring(info.indexOf("\n") + 1, info.length()), getWidth() / 2 - 100, getHeight() - 5);
+    }
+
+    private Image getImageDependingOnDirection(boolean isRival) {
+        Image image;
+        switch (direction) {
+            case 1:
+                image = isRival ? rivalSnakeHeadUpImage : snakeHeadUpImage;
+                break;
+            case 2:
+                image = isRival ? rivalSnakeHeadLeftImage : snakeHeadLeftImage;
+                break;
+            case 3:
+                image = isRival ? rivalSnakeHeadDownImage : snakeHeadDownImage;
+                break;
+            default:
+                image = isRival ? rivalSnakeHeadRightImage : snakeHeadRightImage;
+                break;
+        }
+        return image;
     }
 
     void setInfo(String info) {
@@ -111,5 +187,9 @@ class Field extends JPanel {
 
     void setClientId(int clientId) {
         this.clientId = clientId;
+    }
+
+    void setDirection(int direction) {
+        this.direction = direction;
     }
 }

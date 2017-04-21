@@ -74,6 +74,8 @@ class ClientHandler {
                         }
                         if (!isAlive) {
                             field[0][0] = -Integer.MAX_VALUE;
+                            field[1][0] = -Integer.MAX_VALUE;
+                            ClientHandler.this.field.setDirection(0);
                         }
                         ClientHandler.this.field.setField(field);
                         ClientHandler.this.field.repaint();
@@ -98,7 +100,7 @@ class ClientHandler {
                             ClientHandler.this.id = -1;
                             isAlive = false;
                             field.setInfo(String.format(
-                                    "Кажется, вы труп. Нажмите пробел, чтобы родиться заново.\nРекорд=%d", field.getHighscore())
+                                    "Кажется, вы труп. Нажмите пробел, чтобы вылупиться.\nРекорд=%d", field.getHighscore())
                             );
                             field.repaint();
                         }
@@ -164,6 +166,7 @@ class ClientHandler {
                 request("getNewId");
             }
             if (direction != -1 && isAlive) {
+                field.setDirection(direction);
                 request("direction " + String.valueOf(id) + " " + String.valueOf(direction));
             }
         }

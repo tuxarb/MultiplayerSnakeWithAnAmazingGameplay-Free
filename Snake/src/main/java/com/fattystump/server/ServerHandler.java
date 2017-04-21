@@ -295,7 +295,8 @@ class ServerHandler implements ActionListener {
                 response = new Response();
                 response.setContent("highscore " + game.getHighScore());
                 server.sendToAllTCP(response);
-            } else if (player == null && !deadIds.contains(i + 2)) {
+            }
+            if (player == null && !deadIds.contains(i + 2)) {
                 deadIds.add(i + 2);
                 response = new Response();
                 response.setContent("dead " + (i + 2));

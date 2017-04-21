@@ -149,11 +149,12 @@ public class Game {
         for (Player p : players) {
             if (p == null) continue;
             // segments
-            for (int i = 0; i < p.segmentX.size(); i++) {
+            for (int i = 1; i < p.segmentX.size(); i++) {
                 field[p.segmentX.get(i)][p.segmentY.get(i)] = p.getId();
             }
             // head
             field[p.segmentX.get(0)][p.segmentY.get(0)] = -p.getId();
+            field[p.segmentX.get(0) + 1][p.segmentY.get(0)] = -p.getId();
         }
     }
 
