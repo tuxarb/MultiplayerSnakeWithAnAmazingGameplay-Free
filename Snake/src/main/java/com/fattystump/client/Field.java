@@ -63,7 +63,12 @@ class Field extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.drawImage(backgroundImage, 0, 0, WIDTH * SEGMENT_SIZE, HEIGHT * SEGMENT_SIZE, this);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, WIDTH * SEGMENT_SIZE, HEIGHT * SEGMENT_SIZE, this);
+        } else {
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, WIDTH * SEGMENT_SIZE, HEIGHT * SEGMENT_SIZE);
+        }
         if (field != null) {
             for (int y = 0; y < HEIGHT; y++) {
                 boolean isTheNextObjectDrawn = true;
@@ -99,7 +104,8 @@ class Field extends JPanel {
                             g.drawImage(snakeBodyImage, x * SEGMENT_SIZE, y * SEGMENT_SIZE, SEGMENT_SIZE, SEGMENT_SIZE, this);
                             continue;
                         }
-                    } else if (field[x][y] == -clientId && clientId != 0 || clientId == 0 && field[x][y] == -Integer.MAX_VALUE) { // голова
+                    } else if (field[x][y] == -clientId && clientId != 0 ||
+                            clientId == 0 && field[x][y] == -Integer.MAX_VALUE) { // голова
                         if (snakeHeadRightImage == null) {
                             g.setColor(CURRENT_SNAKE_COLOR.brighter());
                         } else {
@@ -145,6 +151,7 @@ class Field extends JPanel {
                                 image = rivalSnakeHeadRightImage;
                             } else {
                                 image = rivalPrevHeadImage;
+                                headX = x * SEGMENT_SIZE - SEGMENT_SIZE / 2;
                             }
                             g.drawImage(image, headX, y * SEGMENT_SIZE, 2 * SEGMENT_SIZE, SEGMENT_SIZE, this);
                             isTheNextObjectDrawn = false;
