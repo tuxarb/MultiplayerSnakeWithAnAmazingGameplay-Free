@@ -122,6 +122,9 @@ class ServerHandler implements ActionListener {
          * score {id} {score}
          * speed {level} | level in [-9;9]
          */
+        if ("".equals(command)) {
+            return;
+        }
         System.out.println("Command: " + command);
 
         String commandOperator = command.substring(0, command.indexOf(" "));

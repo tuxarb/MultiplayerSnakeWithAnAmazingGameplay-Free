@@ -21,7 +21,7 @@ class ServerFrame extends JFrame {
         setLocationRelativeTo(null);
 
         JPanel contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setBorder(new EmptyBorder(3, 3, 3, 3));
         contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
@@ -72,6 +72,34 @@ class ServerFrame extends JFrame {
         contentPane.add(textCmd, BorderLayout.SOUTH);
         textCmd.setColumns(10);
         textCmd.setEnabled(false);
+
+        JButton commands = new JButton("Команды");
+        commands.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPopupMenu menu = new JPopupMenu();
+                addNewMenuItem(menu, "cкорость", "speed -9");
+                addNewMenuItem(menu, "очки", "score 2 100");
+                addNewMenuItem(menu, "камикадзе", "kamikaze 2");
+                addNewMenuItem(menu, "заморозка", "freeze 2");
+                addNewMenuItem(menu, "отморозка", "unfreeze 2");
+                addNewMenuItem(menu, "бан", "ban 127.0.0.1");
+                addNewMenuItem(menu, "разбан", "unban 127.0.0.1");
+                menu.show(commands, commands.getX() / 3, commands.getY() / 3 + 15);
+            }
+
+            void addNewMenuItem(JPopupMenu menu, String name, String command) {
+                JMenuItem newMenuItem = new JMenuItem(name);
+                newMenuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        textCmd.setText(command);
+                    }
+                });
+                menu.add(newMenuItem);
+            }
+        });
+        panel.add(commands);
 
         DefaultCaret caret = (DefaultCaret) textLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
