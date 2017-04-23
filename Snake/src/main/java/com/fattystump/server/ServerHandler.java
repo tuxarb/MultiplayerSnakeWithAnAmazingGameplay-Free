@@ -8,6 +8,8 @@ import com.fattystump.Request;
 import com.fattystump.Response;
 import com.fattystump.model.Game;
 import com.fattystump.model.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -16,6 +18,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 class ServerHandler implements ActionListener {
+    private ServerFrame serverFrame;
+    private Server server;
+    private Game game;
+    private List<Integer> deadIds = new ArrayList<>();
+    private Map<Integer, Integer> clients = new HashMap<>();
+    private List<String> banList = new ArrayList<>();
+    private Timer timer;
     private static final String PLAYER_NOT_FOUND_ERROR = "Игрок #%d не найден";
     private static final String PLAYER_KAMIKAZE_HINT = "Игрок #%d становится камикадзе";
     private static final String BAN_IP_HINT = "Был забанен IP %s";
@@ -27,16 +36,15 @@ class ServerHandler implements ActionListener {
     private static final String NEW_PLAYER_JOINED_HINT = "Игрок #%d (игровой клиент  %d) присоединился к игре";
     private static final String NEW_HIGHSCORE_HINT = "Игрок #%d установил новый рекорд - %d";
     private static final String PLAYER_DEATH_HINT = "Игрок #%d умирает. Светлая память";
-    private ServerFrame serverFrame;
-    private Server server;
-    private Game game;
-    private List<Integer> deadIds = new ArrayList<>();
-    private Map<Integer, Integer> clients = new HashMap<>();
-    private List<String> banList = new ArrayList<>();
-    private Timer timer;
+    private static final Logger LOG = LoggerFactory.getLogger(ServerHandler.class);
 
-    ServerHandler(ServerFrame serverFrame) {
-        this.serverFrame = serverFrame;
+    ServerHandler(Object serverClass) {
+        if (serverClass instanceof ServerFrame) {
+            serverFrame = (ServerFrame) serverClass;
+        }
+    }
+
+    ServerHandler() {
     }
 
     void start() {
@@ -104,12 +112,14 @@ class ServerHandler implements ActionListener {
 
     private void log(String message) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        serverFrame.getTextLog().setText(
-                serverFrame.getTextLog().getText() +
-                        dateFormat.format(new Date()) +
-                        " " +
-                        message +
-                        "\n");
+        if (serverFrame != null) {
+            serverFrame.getTextLog().setText(
+                    serverFrame.getTextLog().getText() +
+                            dateFormat.format(new Date()) +
+                            " " + message +
+                            "\n");
+        }
+        LOG.info(message);
     }
 
     void handleCommand(String command) {
@@ -125,102 +135,107 @@ class ServerHandler implements ActionListener {
         if ("".equals(command)) {
             return;
         }
-        System.out.println("Command: " + command);
+        LOG.info("Command: " + command.trim());
 
-        String commandOperator = command.substring(0, command.indexOf(" "));
-        switch (commandOperator) {
-            case "freeze":
-                int playerId = Integer.parseInt(
-                        command.substring(command.indexOf(" ") + 1));
-                Player player = getPlayerById(playerId);
-                if (player == null) {
-                    log(new Formatter()
-                            .format(PLAYER_NOT_FOUND_ERROR, playerId)
-                            .toString());
-                    return;
-                }
-                if (player.isFreeze()) return;
-                player.setFreeze(!player.isFreeze());
-                break;
-            case "unfreeze":
-                playerId = Integer.parseInt(
-                        command.substring(command.indexOf(" ") + 1));
-                player = getPlayerById(playerId);
-                if (player == null) {
-                    log(new Formatter()
-                            .format(PLAYER_NOT_FOUND_ERROR, playerId)
-                            .toString());
-                    return;
-                }
-                if (!player.isFreeze()) return;
-                player.setFreeze(!player.isFreeze());
-                break;
-            case "kamikaze":
-                playerId = Integer.parseInt(
-                        command.substring(command.indexOf(" ") + 1));
-                player = getPlayerById(playerId);
-                if (player == null) {
-                    log(new Formatter()
-                            .format(PLAYER_NOT_FOUND_ERROR, playerId)
-                            .toString());
-                    return;
-                }
-                player.setKamikaze(player.getDirection());
-                log(new Formatter()
-                        .format(PLAYER_KAMIKAZE_HINT, player.getId())
-                        .toString());
-                break;
-            case "ban":
-                String ip = command.substring(command.indexOf(" ") + 1);
-                banList.add(ip);
-                for (Connection c : server.getConnections()) {
-                    if (c.getRemoteAddressTCP().getAddress().toString().equals(ip)) {
-                        respond("ban Вы были забанены.", c);
-                        c.close();
+        String commandOperator;
+        try {
+            commandOperator = command.substring(0, command.indexOf(" "));
+            switch (commandOperator) {
+                case "freeze":
+                    int playerId = Integer.parseInt(
+                            command.substring(command.indexOf(" ") + 1).trim());
+                    Player player = getPlayerById(playerId);
+                    if (player == null) {
+                        log(new Formatter()
+                                .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                                .toString());
+                        return;
                     }
-                }
-                log(new Formatter()
-                        .format(BAN_IP_HINT, ip)
-                        .toString());
-                break;
-            case "unban":
-                ip = command.substring(command.indexOf(" ") + 1);
-                if (banList.contains(ip)) banList.remove(ip);
-                log(new Formatter()
-                        .format(UNBAN_IP_HINT, ip)
-                        .toString());
-                break;
-            case "score":
-                String args[] = command.substring(command.indexOf(" ") + 1).split(" ");
-                playerId = Integer.valueOf(args[0]);
-                player = getPlayerById(playerId);
-                if (player == null) {
+                    if (player.isFreeze()) return;
+                    player.setFreeze(!player.isFreeze());
+                    break;
+                case "unfreeze":
+                    playerId = Integer.parseInt(
+                            command.substring(command.indexOf(" ") + 1).trim());
+                    player = getPlayerById(playerId);
+                    if (player == null) {
+                        log(new Formatter()
+                                .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                                .toString());
+                        return;
+                    }
+                    if (!player.isFreeze()) return;
+                    player.setFreeze(!player.isFreeze());
+                    break;
+                case "kamikaze":
+                    playerId = Integer.parseInt(
+                            command.substring(command.indexOf(" ") + 1).trim());
+                    player = getPlayerById(playerId);
+                    if (player == null) {
+                        log(new Formatter()
+                                .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                                .toString());
+                        return;
+                    }
+                    player.setKamikaze(player.getDirection());
                     log(new Formatter()
-                            .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                            .format(PLAYER_KAMIKAZE_HINT, player.getId())
                             .toString());
-                    return;
-                }
-                player.setScore(Integer.parseInt(args[1]));
-                log(new Formatter()
-                        .format(SET_PLAYER_SCORE_HINT, player.getId(), player.getScore())
-                        .toString());
-                break;
-            case "speed":
-                int speedLevel = Integer.valueOf(command.substring(command.indexOf(" ") + 1));
-                if (speedLevel < -9 || speedLevel > 9) {
-                    log(SPEED_INCORRECT_VALUE_ERROR);
-                    return;
-                }
-                timer.setDelay((10 - speedLevel) * 10);
-                log(SPEED_CHANGED_HINT);
-                break;
-            default:
-                log(UNKNOWN_COMMAND_ERROR);
+                    break;
+                case "ban":
+                    String ip = command.substring(command.indexOf(" ") + 1).trim();
+                    banList.add(ip);
+                    for (Connection c : server.getConnections()) {
+                        if (c.getRemoteAddressTCP().getAddress().toString().equals(ip)) {
+                            respond("ban Вы были забанены.", c);
+                            c.close();
+                        }
+                    }
+                    log(new Formatter()
+                            .format(BAN_IP_HINT, ip)
+                            .toString());
+                    break;
+                case "unban":
+                    ip = command.substring(command.indexOf(" ") + 1).trim();
+                    if (banList.contains(ip)) banList.remove(ip);
+                    log(new Formatter()
+                            .format(UNBAN_IP_HINT, ip)
+                            .toString());
+                    break;
+                case "score":
+                    String args[] = command.substring(command.indexOf(" ") + 1).split(" ");
+                    playerId = Integer.valueOf(args[0].trim());
+                    player = getPlayerById(playerId);
+                    if (player == null) {
+                        log(new Formatter()
+                                .format(PLAYER_NOT_FOUND_ERROR, playerId)
+                                .toString());
+                        return;
+                    }
+                    player.setScore(Integer.parseInt(args[1].trim()));
+                    log(new Formatter()
+                            .format(SET_PLAYER_SCORE_HINT, player.getId(), player.getScore())
+                            .toString());
+                    break;
+                case "speed":
+                    int speedLevel = Integer.valueOf(command.substring(command.indexOf(" ") + 1).trim());
+                    if (speedLevel < -9 || speedLevel > 9) {
+                        log(SPEED_INCORRECT_VALUE_ERROR);
+                        return;
+                    }
+                    timer.setDelay((10 - speedLevel) * 10);
+                    log(SPEED_CHANGED_HINT);
+                    break;
+                default:
+                    log(UNKNOWN_COMMAND_ERROR);
+            }
+        } catch (Exception e) {
+            LOG.error("Неверный синтаксис введеной команды.");
         }
     }
 
     private void handleRequest(String content, Connection connection) {
-        System.out.println("Request: " + content);
+        LOG.info("Request: " + content);
         if (content.startsWith("getNewId")) {
             Player newPlayer = new Player(game.getPlayers().size() + 2);
             game.getPlayers().add(newPlayer);
@@ -280,7 +295,11 @@ class ServerHandler implements ActionListener {
 
         Response response = new Response();
         response.setContent(raw);
-        server.sendToAllTCP(response);
+        try {
+            server.sendToAllTCP(response);
+        } catch (Exception e1) {
+            server.sendToAllTCP(response);
+        }
 
         for (int i = 0; i < game.getPlayers().size(); i++) {
             Player player = game.getPlayers().get(i);

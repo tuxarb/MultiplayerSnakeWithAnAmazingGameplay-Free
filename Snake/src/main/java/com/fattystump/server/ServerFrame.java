@@ -14,7 +14,7 @@ class ServerFrame extends JFrame {
     private JTextPane textLog;
     private JTextField textCmd;
 
-    private ServerFrame() {
+    ServerFrame() {
         setTitle("Змеиная Fерма (© Жирный Пень, 2017)");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 400);
@@ -108,18 +108,4 @@ class ServerFrame extends JFrame {
     JTextPane getTextLog() {
         return textLog;
     }
-
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ServerFrame frame = new ServerFrame();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
 }

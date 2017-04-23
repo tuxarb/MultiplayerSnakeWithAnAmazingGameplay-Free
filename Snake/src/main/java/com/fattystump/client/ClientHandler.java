@@ -30,7 +30,7 @@ class ClientHandler {
     }
 
     void startHandling() {
-        clientKryo = new Client(12000, 12000);
+        clientKryo = new Client(15000, 15000);
         clientKryo.start();
         field.setInfo(String.format(Field.SCORE_INFO, score, field.getHighscore()));
         try {
