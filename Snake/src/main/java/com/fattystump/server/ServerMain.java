@@ -6,7 +6,9 @@ import java.awt.*;
 class ServerMain {
     public static void main(String[] args) {
         String mode = System.getProperty("mode");
-        if (mode != null && "gui".equals(mode.toLowerCase())) {
+        if (mode != null && "console".equals(mode.toLowerCase())) {
+            new ServerConsole();
+        } else {
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
@@ -17,8 +19,6 @@ class ServerMain {
                     }
                 }
             });
-        } else {
-            new ServerConsole();
         }
     }
 }
