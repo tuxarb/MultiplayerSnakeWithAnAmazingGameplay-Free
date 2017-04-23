@@ -65,7 +65,7 @@ class ServerFrame extends JFrame {
         textCmd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (serverHandler != null)
-                    serverHandler.handleCommand(textCmd.getText());
+                    serverHandler.handleCommand(textCmd.getText().toLowerCase());
                 textCmd.setText("");
             }
         });

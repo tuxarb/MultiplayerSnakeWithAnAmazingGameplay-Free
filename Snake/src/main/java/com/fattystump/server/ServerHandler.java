@@ -135,7 +135,7 @@ class ServerHandler implements ActionListener {
         if ("".equals(command)) {
             return;
         }
-        LOG.info("Command: " + command.toLowerCase().trim());
+        LOG.info("Command: " + command.trim());
 
         String commandOperator;
         try {

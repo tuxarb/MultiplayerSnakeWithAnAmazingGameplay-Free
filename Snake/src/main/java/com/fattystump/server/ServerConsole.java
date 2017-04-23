@@ -66,7 +66,7 @@ class ServerConsole {
                             displayMainMenu();
                             break;
                         }
-                        serverHandler.handleCommand(input);
+                        serverHandler.handleCommand(input.toLowerCase());
                     }
                     break;
                 case "exit":
