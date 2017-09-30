@@ -1,4 +1,5 @@
-![](https://cloud.githubusercontent.com/assets/15519803/25315795/c3052110-2863-11e7-8bce-31c9f6d9a656.jpg)
+<p align="center"><img width="500" height="300" src="https://cloud.githubusercontent.com/assets/15519803/25315795/c3052110-2863-11e7-8bce-31c9f6d9a656.jpg"></p>
+
 ## *Многопользовательская змейка с серверной/клиентской частями на Java c использованием https://github.com/EsotericSoftware/kryonet либы для передачи объектов по сети, используя TCP/UDP.<br/>*
 ### Краткий обзор
 Сервер часть использует 2 режима отображения:
@@ -29,12 +30,16 @@
 
 ### Как запустить
 Для запуска требуется установленная **Java 8**. 
-* Склонируйте репозиторий
-* Откройте проект в какой-нибудь любимой Вами **IDE**. Если это невозможно, Вам необходимо скомпилировать весь проект, используя утилиту **javac** посредством консоли, а затем перейти на следующий шаг, используя для запуска классов команду **java**.
-* Если вы хотите использовать сервер в графическом режиме, то просто запустите **ServerMain**. Если Вам необходим **консольный вариант** - при запуске **ServerMain** в **VM options** укажите **-Dmode=console.**
-* Запустите сервер
-* Откройте и запустите **ClientFrame**
-* Укажите **ip** запущенного сервера (Если это один и тот же компьютер, то **localhost** или **127.0.0.1**). 
+* Скачайте _https://github.com/FattyStump/MultiplayerSnakeWithAnAmazingGameplay-Free/blob/master/snake-server.jar_
+* Скачайте _https://github.com/FattyStump/MultiplayerSnakeWithAnAmazingGameplay-Free/blob/master/snake-client.jar_
+* Запустите сервер следующей командой из консоли:
+  - Для графического режима:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**_java -jar ваш/путь/к/snake-server.jar_**
+  - Для консольного режима:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**_java -jar -Dmode=console &nbsp;ваш/путь/к/snake-server.jar_**
+* Запустите клиента следующей командой из консоли:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**_java -jar ваш/путь/к/snake-client.jar_**
+* После запуска клиента укажите **ip** запущенного сервера (Если это один и тот же компьютер, то **localhost** или **127.0.0.1**). 
 * Наслаждайтесь игрой! :)
 
 #### Примечание
